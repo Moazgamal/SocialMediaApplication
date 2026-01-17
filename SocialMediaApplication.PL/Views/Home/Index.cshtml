@@ -1,8 +1,134 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    Layout = "";
 }
+<link href="~/css/home.css" rel="stylesheet" />
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<body>
+<div class="nav-bar">
+    <div class="logo">
+        @* <img src="~/images/logo.png"/> *@
+        <i class="fa-brands fa-facebook" style="color:#0d6efd; font-size:45px;"></i>
+        <p>SocialApp</p>
+    </div>
+    <div class="search-box">
+        <p><i class="fa fa-search"></i></p>
+        <input type="text" class="search" placeholder="Search Posts, Friends ..."/>
+    </div>
+    <div class="left-nav">
+        <div class="notif-icon">
+            <i class="fa-solid fa-bell"></i>
+        </div>
+        <div class="prof-icon"></div>
+    </div>
+ </div>
+ 
+ <div class="main-body">
+     <div class="side-bar"> 
+         <div class="options">
+             <a class="feed">
+                <i class="fa-solid fa-house"></i>
+                <span>Feed</span>
+             </a>
+             <a class="favorites">
+                <i class="fa-solid fa-star"></i>
+                <span>Favorites</span>
+             </a>
+             <a class="friends">
+                <i class="fa-solid fa-user-group"></i>
+                <span>Friends</span>
+             </a>
+             <div class="pages">
+                 <div class="pages-span">
+                     <span>Pages</span>
+                 </div>
+                 <div class="settings">
+                     <a class="settings-btn">
+                        <i class="fa-solid fa-gear" style="font-size:15px; cursor:pointer;"></i>
+                        <span>Settings</span>
+                     </a>
+                 </div>
+             </div>
+         </div>
+         <div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+         </div>
+     </div>
+
+     <div class="time-line">
+         <div class="status">
+             <div class="const-status">
+                <i class="fa-solid fa-camera camera-icon"></i>
+             </div>
+             <div class="temp-status">
+
+             </div>
+         </div>
+         <div class="posting">
+             <button class="text-box">
+                 <p>What do you have in  mind?</p>
+             </button>
+             <button class="upload-image">
+                <i class="fa-solid fa-upload"></i>
+             </button>
+         </div>
+         <div class="posts">
+             <span>Currently, there are no posts available. Would you like to create the first one?</span>
+         </div>
+     </div>
+     <div class="right-side">
+         <div class="suggestions">
+             <p class="people-know">People you may know</p>
+             <div class="people">
+                 <div class="person">
+                     <div class="image-with-followers">
+                            <div class="sugg-image"><img src="~/images/girl.webp" style="height:45px; width:45px" /></div>
+                            <div class="name-followers">
+                                <p style="font-size:22px;margin:0px;margin-bottom:3px; font-weight:bold; font-family:Calibri;">Carol White</p>
+                                <p style="margin:0;opacity:0.4;margin-bottom:3px; font-size:smaller;">5 followers</p>
+                            </div>
+                     </div>
+                 <button class="follow-btn">
+                     <p>follow</p>
+                 </button>
+                 </div>
+                 <div class="person">
+                        <div class="image-with-followers">
+                            <div class="sugg-image"><img src="~/images/girl2.webp" style="height:45px; width:45px" /></div>
+                            <div class="name-followers">
+                                <p style="font-size:22px;margin:0px;margin-bottom:3px; font-weight:bold; font-family:Calibri;">Alice Johnson</p>
+                                <p style="margin:0;opacity:0.4;margin-bottom:3px; font-size:smaller;">5 followers</p>
+                            </div>
+                        </div>
+                    <button class="follow-btn">
+                            <p>follow</p>
+                    </button>
+                 </div>
+                 <div class="person">
+                        <div class="image-with-followers">
+                            <div class="sugg-image"><img src="~/images/girl3jpg.jpg" style="height:45px; width:45px" /></div>
+                            <div class="name-followers">
+                                <p style="font-size:22px;margin:0px;margin-bottom:3px; font-weight:bold; font-family:Calibri;">Eve Davis</p>
+                                <p style="margin:0;opacity:0.4;margin-bottom:3px; font-size:smaller;">5 followers</p>
+                            </div>
+                        </div>
+                    <button class="follow-btn">
+                            <p>follow</p>
+                    </button>
+                 </div>
+             </div>
+         </div>
+         <div class="trends">
+             <p class="trends-for-you">Trends for you</p>
+             <div class="hastags" style="width:fit-content">
+                 <a style="cursor:pointer;">
+                    <p style="font-size:20px;margin:0px;margin-bottom:3px; font-weight:bolder; font-family:Calibri;">#Weekend</p>
+                    <p style="margin:0;opacity:0.4;margin-bottom:3px; font-size:smaller;">1 Post</p>
+                 </a>
+             </div>
+         </div>
+     </div>
+ </div>
+
+ </body>

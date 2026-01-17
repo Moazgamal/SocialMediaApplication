@@ -13,4 +13,8 @@
     <ProjectReference Include="..\SocialMediaApplication.BLL\SocialMediaApplication.BLL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>
