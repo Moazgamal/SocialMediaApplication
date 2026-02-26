@@ -1,6 +1,6 @@
 using System;
 
-namespace SocialMediaApplication.PL.Models
+namespace SocialMediaApplication.PL.ViewModels
 {
     public class ErrorViewModel
     {

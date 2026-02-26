@@ -1,0 +1,7 @@
+﻿@model IEnumerable<PostToReturnViewModel>;
+@foreach (var post in Model)
+{
+    <div id="post">
+        <partial name="Post" model="post"/>
+    </div>
+}

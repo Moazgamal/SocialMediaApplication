@@ -1,0 +1,25 @@
+﻿@model PostToReturnViewModel;
+
+<div class="post-header">
+    <input type="hidden" name="PostId" value="@Model.Id" readonly/>
+    <div class="user-name-and-image">
+        <div class="post-username"><img class="user-image" src="~/images/@Model.creatingUserImageName" alt="User Image" /></div>
+        <div class="post-date-and-user">
+            <p style="font-size:18px;margin:0px;margin-bottom:3px; font-weight:bold; font-family:Calibri;">@Model.creatingUserName</p>
+            <p style="margin:0;opacity:0.4;margin-bottom:3px; font-size:smaller;">5 followers</p>
+        </div>
+    </div>
+    <div class="setting-points">
+        <div class="setting-points-container">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</div>
+<div class="created-post-text">
+    <textarea readonly>@Model.postText</textarea>
+</div>
+<div class="created-post-image">
+    <img src="~/images/@Model.postImageName" alt="Preview">
+</div>

@@ -1,0 +1,23 @@
+﻿@model PostToCreateViewModel
+<div asp-validation-summary="ModelOnly"></div>
+<form id="create-post" enctype="multipart/form-data">
+    <div class="modal-head">
+        <p>Create Status</p>
+        <button type="button" id="close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    @* <input type="hidden" name="creatingUserName" value="@ViewData["currentUserName"]" /> *@
+    @* <input type="hidden" name="creatingUserName" value="@ViewData["currentUserProfilePicture"]" /> *@
+    <textarea asp-for="postText" placeholder="What do you have in mind?" onfocus="this.placeholder=''" onblur="this.placeholder='What do you have in mind?'"></textarea>
+    <span asp-validation-for="postText"></span>
+    <div class="post-img">
+        <img id="preview" src="" alt="Preview">
+    </div>
+    <div class="up-image">
+        <input type="file" asp-for="postImage" id="imgInput" accept="image/*" style="display:none;">
+        <span asp-validation-for="postImage"></span>
+        <button type="button" id="uploadBtn"><i class="fa-solid fa-image"></i>Image</button>
+    </div>
+    <div class="create-btn-div">
+        <button id="create-btn" type="submit">Create</button>
+    </div>
+</form>

@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="~/css/authlayout.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container-div">
+        <div class="Left-Side">
+            @RenderBody()
+        </div>
+        <div class="Right-Side">
+            @if(ViewBag.Title == "SignUp")
+            {
+                <div class="slide active" >
+                    <img src="~/images/man1.jpg" />
+                </div>
+                
+            }
+            else
+            {
+                <div class="slide active">
+                    <img src="~/images/man1.jpg" />
+                </div>
+            }
+            @* <div class="slide" >
+                <img src="~/images/man2.jpg"/>
+            </div> *@
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("ValidationScriptsSection", required: false)
+</body>
+</html>
+@* <script>
+    const slides = document.querySelectorAll(".slide");
+    let current = 0;
+
+    setInterval(() => {
+        
+        slides[current].classList.remove("active");
+        slides[current].classList.add("exit");
+
+        
+        let next = (current + 1) % slides.length;
+        slides[next].classList.remove("exit");
+        slides[next].classList.add("active");
+
+        current = next;
+    }, 4000); 
+</script> *@

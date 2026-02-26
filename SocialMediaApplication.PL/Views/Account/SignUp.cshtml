@@ -1,0 +1,25 @@
+﻿@model SignUpViewModel
+@{
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+    ViewBag.Title = "SignUp";
+}
+<div asp-validation-summary="ModelOnly"></div>
+<form asp-action="SignUp" method="post" enctype="multipart/form-data">
+    <input asp-for="FirstName" placeholder="First Name" />
+    <input asp-for="LastName" placeholder="Last Name" />
+    <input asp-for="UserName" placeholder="Username" />
+    <input asp-for="Email" placeholder="Email"/>
+    <input asp-for="Password" placeholder="Password" />
+    <input asp-for="ConfirmPassword" placeholder="Confirm Password" />
+    <input asp-for="profilePicture" accept="image/*" placeholder=" Upload Picture" />
+    <div class="IsAgree">
+        <input asp-for="IsAgree" type="checkbox"/>
+        <span>I Agree To The Terms & Conditions</span>
+    </div>
+    <input type="submit" value="Sign Up"/>
+</form>
+<p class="account-question">Do you have an Account? <a asp-action="SignIn">Login Now!</a></p>
+
+@section ValidationScriptsSection{
+    <partial name="_ValidationScriptsPartial" />
+}
