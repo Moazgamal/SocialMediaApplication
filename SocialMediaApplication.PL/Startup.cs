@@ -67,7 +67,6 @@ namespace SocialMediaApplication.PL
         {
             if (env.IsDevelopment())
             {
-                
                 app.UseDeveloperExceptionPage();
             }
             else

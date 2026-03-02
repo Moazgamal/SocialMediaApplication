@@ -43,15 +43,38 @@ namespace SocialMediaApplication.PL.Controllers
             var user = await _userManager.GetUserAsync(User);
             //ViewData["currentUserName"] = user.UserName;
             //ViewData["currentUserProfilePicture"] = user.profilePictureName;
-            return View();
+            var posts = await _unitOfWork.Repository<Post>().GetAllAsync() as IEnumerable<Post>;
+            List<PostToReturnViewModel> returnedPosts = new List<PostToReturnViewModel>();
+            
+            foreach ( var post in posts)
+            {
+                var newPost = new PostToReturnViewModel
+                {
+                    Id= post.Id,
+                    creatingUserImageName = user.profilePictureName,
+                    creatingUserName = user.UserName,
+                    postImageName = post.postImageName,
+                    postText = post.postText,
+                    DateOfCreation = post.DateOfCreation
+                };
+                returnedPosts.Add(newPost); 
+            }
+            return View("Index", returnedPosts);
+        }
+        [HttpGet]
+        public IActionResult GetCreateForm()
+        {
+            return PartialView("HomePartialViews/CreatePost");
         }
         [HttpPost]
         public async Task<IActionResult> AddPost(PostToCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var postName = DocumentSettings.UploadFile(model.postImage, "images");
-                var user = await _userManager.GetUserAsync(User);
+                string postName = "";
+                if(model.postImage is not null)
+                    postName = DocumentSettings.UploadFile(model.postImage, "images");
+                var user =  await _userManager.GetUserAsync(User);
                 var post = new Post {
                     creatingUserId = user.Id,
                     postText = model.postText,
@@ -64,15 +87,17 @@ namespace SocialMediaApplication.PL.Controllers
                     if(count == 0)
                     {
                         // delete the image
-                        DocumentSettings.DeleteFile(postName, "images");
+                        if(postName != "")
+                            DocumentSettings.DeleteFile(postName, "images");
                         Response.StatusCode = 400;
-                        return PartialView("CreatePost", model);
+                        return PartialView("HomePartialViews/CreatePost", model);
                     }
                 }
                 catch (Exception ex)
                 {
                     // delete the image
-                    DocumentSettings.DeleteFile(postName, "images");
+                    if (postName != "")
+                        DocumentSettings.DeleteFile(postName, "images");
                     if (_env.IsDevelopment())
                         ModelState.AddModelError(string.Empty, ex.Message);
                     ModelState.AddModelError(string.Empty, "An Error Has Occured Adding Post");
@@ -87,10 +112,10 @@ namespace SocialMediaApplication.PL.Controllers
                     postImageName=post.postImageName,
                     DateOfCreation = post.DateOfCreation
                 };
-                return PartialView("Post", postToReturn);
+                return PartialView("HomePartialViews/Post", postToReturn);
             }
             Response.StatusCode = 400;
-            return PartialView("CreatePost", model);
+            return PartialView("HomePartialViews/CreatePost", model);
         }
         public IActionResult Privacy()
         {
@@ -104,6 +129,40 @@ namespace SocialMediaApplication.PL.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> checkPostPrivilege([FromBody]string postId)
+        {
+            if (postId is null)
+                return Json(new
+                {
+                    success = false,
+                });
+            int Id;
+
+            bool isValid = int.TryParse(postId, out Id);
+
+            if (!isValid)
+                return Json(new
+                {
+                    success = false,
+                    IsPostCreator = false
+                });
+            var user = await _userManager.GetUserAsync(User);
+            var post = await _unitOfWork.Repository<Post>().GetAsync(Id);
+            if (post is null || post.creatingUserId != user.Id)
+                return Json(new
+                {
+                    success = false,
+                    IsPostCreator = false
+                });
+            return Json(new
+            {
+                success = true,
+                IsPostCreator = true
+            });
+        }
+        
 
     }
 }

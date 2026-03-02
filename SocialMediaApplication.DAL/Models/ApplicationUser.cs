@@ -6,17 +6,10 @@ namespace SocialMediaApplication.DAL.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        [Required]
-        [MinLength(1)]
-        [MaxLength(10)]
         public string FirstName { get; set; }
-        [Required]
-        [MinLength(1)]
-        [MaxLength(10)]
+
         public string LastName { get; set; }
-        [Required]
         public bool IsAgree { get; set; }
-        [Required]
         public string profilePictureName { get; set; }
 
         public ICollection<Post>? createdPosts { get; set; } // Navigational Property Many

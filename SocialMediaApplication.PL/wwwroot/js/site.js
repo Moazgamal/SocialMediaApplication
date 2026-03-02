@@ -5,89 +5,131 @@
 
 let btn = document.getElementById("post-text");
 let modal = document.getElementById("modal-div");
-//let createPostForm = document.getElementById("create-post");
 let createPostForm = document.getElementById("form-container");
-let closeButton = document.getElementById("close");
 
-btn.onclick = function () {
+
+modal.onclick = function () {
+    createPostForm.classList.toggle("show");
+    $("#form-container").html("")
+    modal.classList.toggle("show");
+};
+$("#post-text").click(function () {
     modal.classList.add("show");
     createPostForm.classList.add("show");
-};
-modal.onclick = function () {
-    modal.classList.toggle("show");
-    createPostForm.classList.toggle("show");
-};
-closeButton.onclick = function () {
-    modal.classList.toggle("show");
-    createPostForm.classList.toggle("show");
-};
+    fetch("/Home/GetCreateForm")
+        .then(res => res.text())
+        .then(result => {
 
-const imgInput = document.getElementById('imgInput');
-const uploadBtn = document.getElementById('uploadBtn');
-const image = document.getElementById('preview');
-
-uploadBtn.addEventListener('click', () => {
-    imgInput.click();
+            $("#form-container").html(result);
+            loadFormEvents();
+            bindCreatePostForm();
+        });
 });
 
-imgInput.addEventListener('change', () => {
-    if (imgInput.files && imgInput.files[0]) {
-        const file = imgInput.files[0];
-        preview.src = URL.createObjectURL(file);
-        preview.style.display = 'block';
-        preview.onload = () => {
-            URL.revokeObjectURL(preview.src);
-        };
-    }
-    else {
-        preview.src = '';
-        preview.style.display = 'none';
-    }
-});
+function loadFormEvents() {
+    let closeButton = document.getElementById("close");
+    closeButton.onclick = function () {
+        createPostForm.classList.toggle("show");
+        $("#form-container").html("");
+        modal.classList.toggle("show");
+    };
+    const imgInput = document.getElementById('imgInput');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const image = document.getElementById('preview');
+
+    uploadBtn.addEventListener('click', () => {
+        imgInput.click();
+    });
+
+    imgInput.addEventListener('change', () => {
+        if (imgInput.files && imgInput.files[0]) {
+            const file = imgInput.files[0];
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+            preview.onload = () => {
+                URL.revokeObjectURL(preview.src);
+            };
+        }
+        else {
+            preview.src = '';
+            preview.style.display = 'none';
+        }
+    });
+};
 
 let postsContainer = document.getElementById("all-posts");
-let form = $("#create-post");
-form.validate({
-    onkeyup: false
+
+$(document).ready(function () {
+    
+    bindCreatePostForm();
+
 });
 
-    form.on("submit", function (e) {
-        //var creatPostForm = e.target;
-        
-        if (!form.valid()) {
-            e.preventDefault();
-            return; // فيه errors → سيبه يعرضهم وخلاص
+function bindCreatePostForm() {
+    $("#create-post").validate({
+
+        submitHandler: function (form) {
+            let formData = new FormData(form);
+            fetch("/Home/AddPost", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => res.text())
+                .then(result => {
+                    if (result.includes("create-post")) {
+
+                        $("#form-container").html(result);
+                        bindCreatePostForm();
+                    }
+                    else {
+                        createPostForm.classList.toggle("show");
+                        $("#form-container").html("");
+                        modal.classList.toggle("show");
+                        $("#all-posts").prepend(result);
+                    }
+                });
+            return false;
         }
-        e.preventDefault();
-        var formData = new FormData(this);
-        //var partialContent = postsContainer.innerHTML;
-        var newDiv = document.createElement('div');
-        fetch("/Home/AddPost", {
-            method: "Post",
-            body: formData
-        })
-            .then(response => {
-                if (!response.ok) {
-                    
-                    document.getElementById("form-container").innerHTML = html;
-
-                    // فعل الـ validation تانى
-                    $.validator.unobtrusive.parse("#form-container");
-
-                    return; // وقف هنا
-                }
-
-                return response.text();
-            })
-            .then(result => {
-                newDiv.innerHTML = result;
-                newDiv.id = "post";
-                postsContainer.insertBefore(newDiv, postsContainer.firstChild);
-                this.reset();
-                form.valid();
-            })
-            .catch(err => console.log(err))
     });
+}
+
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("setting-points-container")) {
+        let x = `post-user-settings-${e.target.dataset.postId}`;
+        let postUserSettings = document.getElementById(`post-user-settings-${e.target.dataset.postId}`);
+        let postFriendSettings = document.getElementById(`post-friend-settings-${e.target.dataset.postId}`);
+        if (postUserSettings != null && postUserSettings.classList.contains("show")) {
+            postUserSettings.classList.toggle("show");
+        }
+        else if (postFriendSettings != null && postFriendSettings.classList.contains("show")) {
+            postFriendSettings.classList.toggle("show");
+        }
+        else {
+            fetch("/Home/checkPostPrivilege", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(
+                    e.target.dataset.postId
+                )
+            })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.success) {
+                        if (result.IsPostCreator) {
+                            postUserSettings.classList.add("show");
+                        }
+                        else {
+                            postFriendSettings.classList.add("show");
+                        }
+                    }
+
+                });
+        }
+    }
+    
+});
 
 
 

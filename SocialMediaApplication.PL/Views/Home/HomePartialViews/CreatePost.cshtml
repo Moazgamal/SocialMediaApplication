@@ -1,6 +1,7 @@
 ﻿@model PostToCreateViewModel
+<form id="create-post" method="post" enctype="multipart/form-data">
+    @* @Html.AntiForgeryToken() *@
 <div asp-validation-summary="ModelOnly"></div>
-<form id="create-post" enctype="multipart/form-data">
     <div class="modal-head">
         <p>Create Status</p>
         <button type="button" id="close"><i class="fa-solid fa-xmark"></i></button>
@@ -21,3 +22,4 @@
         <button id="create-btn" type="submit">Create</button>
     </div>
 </form>
+

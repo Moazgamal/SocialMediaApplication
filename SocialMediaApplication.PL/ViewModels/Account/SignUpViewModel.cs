@@ -10,10 +10,14 @@ namespace SocialMediaApplication.PL.ViewModels.Account
 
         [Required(ErrorMessage = "First Name is required")]
         [Display(Name = "First Name")]
+        [MinLength(1)]
+        [MaxLength(10)]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Last Name is required")]
         [Display(Name = "Last Name")]
+        [MinLength(1)]
+        [MaxLength(10)]
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
@@ -33,7 +37,9 @@ namespace SocialMediaApplication.PL.ViewModels.Account
         [Required(ErrorMessage = "Profile Picture is required")]
         [Display(Name = "Profile Picture")]
         public IFormFile profilePicture { get; set; }
-        
+
+        //[Required]
+        //[Range(typeof(bool), "true", "true", ErrorMessage = "You must agree to the terms")]
         public bool IsAgree { get; set; }
     }
 }

@@ -34,8 +34,8 @@ namespace SocialMediaApplication.DAL.Data.Configurations
 
             // منع user يفضل نفسه
             builder.HasCheckConstraint(
-                "CK_UserFavUser_NoSelfFav",
-                "[UserId] <> [FavUserId]"
+                "CK_UserFriendUser_NoSelfFriend",
+                "[UserId] <> [FriendUserId]"
             );
 
             builder.ToTable("UserAddFriendUsers");

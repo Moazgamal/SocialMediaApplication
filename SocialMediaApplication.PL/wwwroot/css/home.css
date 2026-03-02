@@ -1,5 +1,8 @@
 ﻿body {
     margin:0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 .nav-bar {
     display: flex;
@@ -90,7 +93,8 @@
     display: flex;
     flex-direction: row;
     height: fit-content;
-
+/*    min-height: 100vh;*/
+    flex: 1;
 }
 .side-bar{
     margin-left: 30px;
@@ -353,7 +357,7 @@ background-color: #e5e5e580;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index:2;
+    z-index: 2;
 }
 #form-container{
     display:none;
@@ -363,7 +367,7 @@ background-color: #e5e5e580;
     position: relative;
 }
 #create-post {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -471,6 +475,7 @@ background-color: #e5e5e580;
 }
 
 #post{
+    position: relative;
     display:flex;
     flex-direction: column;
     padding: 20px;
@@ -482,7 +487,6 @@ background-color: #e5e5e580;
     border-radius: 10px;
     flex-direction: column;
     background-color: white;
-    
 }
 
 #post .post-header{
@@ -514,6 +518,7 @@ background-color: #e5e5e580;
 }
 #post .post-header .setting-points{
     margin-top: 15px;
+    position: relative;
 }
 #post .post-header .setting-points .setting-points-container{
     display:flex;
@@ -555,6 +560,45 @@ background-color: #e5e5e580;
     margin-top:10px;
 }
 
+#post .setting-points .post-user-settings,#post .post-friend-settings{
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    top:6px;
+    right:10px;
+/*    z-index: 5;*/
+    background-color:#e5e5e580;
+/*    display:flex;*/
+    flex-direction:column;
+    border-radius: 3px;
+    display: none;
+    
+}
+#post .setting-points .post-user-settings.show,#post .post-friend-settings.show{
+    display: flex;
+}
+#post .setting-points .post-user-settings div,#post .post-friend-settings div{
+    text-align: center;
+    height: calc(100%/3);
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+#post .setting-points .post-user-settings div a, #post .post-friend-settings div a{
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-family: Calibri;
+    color: rgb(0, 0, 0, 0.7);
+    width: 100%;
+}
+#post .setting-points .post-user-settings div:hover, #post .post-friend-settings div:hover{
+    background-color: #e5e5e580;
+}
 
 
 

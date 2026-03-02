@@ -5,7 +5,7 @@ namespace SocialMediaApplication.PL.ViewModels.Post
 {
     public class PostToCreateViewModel
     {
-        [Required]
+        [Required(ErrorMessage ="Post Text Is Required")]
         [MinLength(1)]
         [MaxLength(200)]
         public string postText { get; set; }
