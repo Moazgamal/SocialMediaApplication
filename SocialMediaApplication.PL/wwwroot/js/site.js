@@ -95,7 +95,6 @@ function bindCreatePostForm() {
 
 document.addEventListener("click", function (e) {
     if (e.target.classList.contains("setting-points-container")) {
-        let x = `post-user-settings-${e.target.dataset.postId}`;
         let postUserSettings = document.getElementById(`post-user-settings-${e.target.dataset.postId}`);
         let postFriendSettings = document.getElementById(`post-friend-settings-${e.target.dataset.postId}`);
         if (postUserSettings != null && postUserSettings.classList.contains("show")) {
@@ -116,8 +115,10 @@ document.addEventListener("click", function (e) {
             })
                 .then(res => res.json())
                 .then(result => {
-                    if (result.success) {
-                        if (result.IsPostCreator) {
+                    console.log(result.success);
+                    console.log(result.IsPostCreator);
+                    if (result.success === true) {
+                        if (result.isPostCreator === true) {
                             postUserSettings.classList.add("show");
                         }
                         else {
