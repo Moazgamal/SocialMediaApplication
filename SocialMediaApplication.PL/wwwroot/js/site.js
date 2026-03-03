@@ -129,8 +129,34 @@ document.addEventListener("click", function (e) {
                 });
         }
     }
-    
+    else if (e.target.classList.contains("Delete-Post")) {
+        let postUserSettings = document.getElementById(`post-user-settings-${e.target.dataset.postId}`);
+        let currentPost = document.getElementsByClassName(`post-${e.target.dataset.postId}`)[0];
+        let parent = currentPost.parentNode;
+        let nextSibling = currentPost.nextSibling;
+        currentPost.remove();
+        fetch("/Home/DeletePost", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                e.target.dataset.postId
+            )
+        })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success === false) {
+                    parent.insertBefore(post, nextSibling);
+                }
+
+            }).catch(() => {
+                parent.insertBefore(currentPost, nextSibling);
+            });
+    }
 });
+
+
 
 
 

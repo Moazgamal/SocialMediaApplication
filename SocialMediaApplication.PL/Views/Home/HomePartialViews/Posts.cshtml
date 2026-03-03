@@ -1,5 +1,5 @@
-﻿@model IEnumerable<PostToReturnViewModel>;
-@foreach (var newpost in Model)
+﻿@model List<PostToReturnViewModel>;
+@for (int i = Model.Count()-1; i>=0;i--)
 {
-     <partial name="HomePartialViews/Post" model="newpost"/>
+     <partial name="HomePartialViews/Post" model="Model[i]"/>
 }

@@ -117,6 +117,63 @@ namespace SocialMediaApplication.PL.Controllers
             Response.StatusCode = 400;
             return PartialView("HomePartialViews/CreatePost", model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePost([FromBody]string? postId)
+        {
+            if (postId is null)
+                return Json(new
+                {
+                    success = false,
+                });
+            int Id;
+
+            bool isValid = int.TryParse(postId, out Id);
+
+            if (!isValid)
+                return Json(new
+                {
+                    success = false,
+                });
+
+            var user = await _userManager.GetUserAsync(User);
+            var post = await _unitOfWork.Repository<Post>().GetAsync(Id);
+            if (post is null || post.creatingUserId != user.Id)
+                return Json(new
+                {
+                    success = false
+                });
+            var postImage = post.postImageName;
+            try
+            {
+                _unitOfWork.Repository<Post>().Delete(post);
+                var count = await _unitOfWork.Complete();
+                if (count == 0)
+                {
+                    return Json(new
+                    {
+                        success = false
+                    });
+                }
+                if (postImage is not null && postImage != "")
+                    DocumentSettings.DeleteFile(postImage, "images");
+                return Json(new
+                {
+                    success = true,
+                });
+            }
+            catch (Exception ex)
+            {
+                if (_env.IsDevelopment())
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                ModelState.AddModelError(string.Empty, "An Error Has Occured Deleting Post");
+                return Json(new
+                {
+                    success = false
+                });
+            }
+            
+        }
         public IActionResult Privacy()
         {
             return View();
@@ -131,7 +188,7 @@ namespace SocialMediaApplication.PL.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> checkPostPrivilege([FromBody]string postId)
+        public async Task<IActionResult> checkPostPrivilege([FromBody]string? postId)
         {
             if (postId is null)
                 return Json(new

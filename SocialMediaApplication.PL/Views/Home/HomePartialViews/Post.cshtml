@@ -1,5 +1,5 @@
 ﻿@model PostToReturnViewModel;
-<div id="post">
+<div id="post" class="post-@Model.Id">
 <div class="post-header">
     <input type="hidden" name="PostId" value="@Model.Id" readonly/>
     <div class="user-name-and-image">
@@ -13,19 +13,19 @@
     </div>
     <div class="setting-points">
         <a class="setting-points-container" id="setting-points-container-@Model.Id"  data-post-id="@Model.Id">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span class="setting-points-container" data-post-id="@Model.Id"></span>
+            <span class="setting-points-container" data-post-id="@Model.Id"></span>
+            <span class="setting-points-container" data-post-id="@Model.Id"></span>
         </a>
         <div id="post-user-settings-@Model.Id" class="post-user-settings">
-            <div>
-            <a >Update</a>
+            <div data-post-id="@Model.Id">
+            <a id="Update-Post" data-post-id="@Model.Id">Update</a>
             </div>
-            <div>
-            <a >Delete</a>
+            <div class="Delete-Post" data-post-id="@Model.Id">
+            <a class="Delete-Post" data-post-id="@Model.Id">Delete</a>
             </div>
-            <div>
-            <a >Hide</a>
+            <div data-post-id="@Model.Id">
+            <a id="Hide-Post" data-post-id="@Model.Id">Hide</a>
             </div>
         </div>
         <div id="post-friend-settings-@Model.Id" class="post-friend-settings">

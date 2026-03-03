@@ -520,7 +520,7 @@ background-color: #e5e5e580;
     margin-top: 15px;
     position: relative;
 }
-#post .post-header .setting-points .setting-points-container{
+#post .post-header .setting-points a.setting-points-container{
     display:flex;
     flex-direction: row;
     align-items:flex-start;
@@ -528,7 +528,7 @@ background-color: #e5e5e580;
     height:fit-content;
     cursor:pointer;
 }
-#post .post-header .setting-points .setting-points-container span{
+#post .post-header .setting-points a.setting-points-container span{
     width:5px;
     height:5px;
     border-radius:50%;
