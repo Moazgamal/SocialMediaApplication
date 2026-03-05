@@ -11,6 +11,9 @@
     <textarea asp-for="postText" placeholder="What do you have in mind?" onfocus="this.placeholder=''" onblur="this.placeholder='What do you have in mind?'"></textarea>
     <span asp-validation-for="postText"></span>
     <div class="post-img">
+        @* @if(Model is not null && Model.postImageName is not null)
+        <img src="@($"~/files/images/{Model.postImageName}")" alt="Preview" width="200">*@
+        
         <img id="preview" src="" alt="Preview">
     </div>
     <div class="up-image">

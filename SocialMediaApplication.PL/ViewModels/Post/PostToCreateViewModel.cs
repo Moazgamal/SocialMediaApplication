@@ -9,6 +9,7 @@ namespace SocialMediaApplication.PL.ViewModels.Post
         [MinLength(1)]
         [MaxLength(200)]
         public string postText { get; set; }
-        public IFormFile postImage { get; set; }
+        public IFormFile? postImage { get; set; }
+        public string? postImageName { get; set; }
     }
 }

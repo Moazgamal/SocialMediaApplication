@@ -16,7 +16,16 @@ modal.onclick = function () {
 $("#post-text").click(function () {
     modal.classList.add("show");
     createPostForm.classList.add("show");
-    fetch("/Home/GetCreateForm")
+    fetch("/Home/GetCreateForm",
+        {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                "Create"
+            )
+        })
         .then(res => res.text())
         .then(result => {
 
@@ -65,28 +74,42 @@ $(document).ready(function () {
 
 });
 
-function bindCreatePostForm() {
+function bindCreatePostForm(currentPost, postId) {
     $("#create-post").validate({
 
         submitHandler: function (form) {
             let formData = new FormData(form);
-            fetch("/Home/AddPost", {
+            if(postId)
+                formData.append("postId", postId);
+            fetch("/Home/AddOrUpdatePost", {
                 method: "POST",
                 body: formData
             })
                 .then(res => res.text())
                 .then(result => {
+                    
                     if (result.includes("create-post")) {
-
                         $("#form-container").html(result);
                         bindCreatePostForm();
+                    } else if (currentPost && postId && postId !== null) {
+                        console.log("2");
+                        createPostForm.classList.toggle("show");
+                        $("#form-container").html("");
+                        modal.classList.toggle("show");
+                        let temp = document.createElement("div");
+                        temp.innerHTML = result;
+
+                        let newElement = temp.firstElementChild;
+
+                        currentPost.replaceWith(newElement);
                     }
-                    else {
+                    else{
                         createPostForm.classList.toggle("show");
                         $("#form-container").html("");
                         modal.classList.toggle("show");
                         $("#all-posts").prepend(result);
                     }
+                    
                 });
             return false;
         }
@@ -115,8 +138,6 @@ document.addEventListener("click", function (e) {
             })
                 .then(res => res.json())
                 .then(result => {
-                    console.log(result.success);
-                    console.log(result.IsPostCreator);
                     if (result.success === true) {
                         if (result.isPostCreator === true) {
                             postUserSettings.classList.add("show");
@@ -152,6 +173,28 @@ document.addEventListener("click", function (e) {
 
             }).catch(() => {
                 parent.insertBefore(currentPost, nextSibling);
+            });
+    }
+    else if (e.target.classList.contains("Update-Post")) {
+        let currentPost = document.getElementsByClassName(`post-${e.target.dataset.postId}`)[0];
+        fetch("/Home/GetCreateForm",
+            {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(
+                    e.target.dataset.postId
+                )
+            })
+            .then(res => res.text())
+            .then(result => {
+                modal.classList.toggle("show");
+                console.log(result);
+                createPostForm.classList.toggle("show");
+                $("#form-container").html(result);
+                loadFormEvents();
+                bindCreatePostForm(currentPost, e.target.dataset.postId);
             });
     }
 });

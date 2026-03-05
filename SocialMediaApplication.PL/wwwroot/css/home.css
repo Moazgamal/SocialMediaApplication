@@ -1,8 +1,10 @@
-﻿body {
+﻿
+body {
     margin:0;
     display: flex;
     flex-direction: column;
-    height: 100%;
+/*    height: 100vh;*/
+/*    flex:1;*/
 }
 .nav-bar {
     display: flex;
@@ -351,13 +353,16 @@ background-color: #e5e5e580;
 }
 #modal-div.show {
     opacity:1;
-    display: block;
-    position: absolute;
+    display: flex;
+/*    flex-direction: row;*/
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
+/*    flex:1;*/
     z-index: 2;
+/*    inset: 0;*/
 }
 #form-container{
     display:none;
@@ -544,6 +549,7 @@ background-color: #e5e5e580;
     display:block;
     font-size:24px;
     width:100%;
+    height:fit-content;
     resize: none; 
     font-family:Arial;
 }

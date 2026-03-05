@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -61,14 +62,113 @@ namespace SocialMediaApplication.PL.Controllers
             }
             return View("Index", returnedPosts);
         }
-        [HttpGet]
-        public IActionResult GetCreateForm()
-        {
-            return PartialView("HomePartialViews/CreatePost");
-        }
         [HttpPost]
-        public async Task<IActionResult> AddPost(PostToCreateViewModel model)
+        public async Task<IActionResult> GetCreateFormAsync([FromBody]string? postId)
         {
+            if(postId is null)
+                return Json(new
+                {
+                    success = false,
+                });
+            if(postId == "Create")
+                return PartialView("HomePartialViews/CreatePost");
+
+            int Id;
+
+            bool isValid = int.TryParse(postId, out Id);
+
+            if (!isValid)
+                return Json(new
+                {
+                    success = false,
+                });
+
+            var user = await _userManager.GetUserAsync(User);
+            var post = await _unitOfWork.Repository<Post>().GetAsync(Id);
+            if (post is null || post.creatingUserId != user.Id)
+                return Json(new
+                {
+                    success = false
+                });
+            var postImage = post.postImageName;
+            
+            var postToCreate = new PostToCreateViewModel
+            {
+                postText = post.postText,
+                postImageName = postImage
+            };
+            
+            return PartialView("HomePartialViews/CreatePost", postToCreate);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrUpdatePost(PostToCreateViewModel model, string? postId)
+        {
+            if (!ModelState.IsValid)
+            {
+                Response.StatusCode = 400;
+                return PartialView("HomePartialViews/CreatePost", model);
+            }
+            if(postId !="undefined" && postId is not null)
+            {
+                int Id;
+
+                bool isValid = int.TryParse(postId, out Id);
+
+                if (!isValid)
+                {
+                    Response.StatusCode = 400;
+                    return PartialView("HomePartialViews/CreatePost", model);
+                }
+                var user = await _userManager.GetUserAsync(User);
+                var post = await _unitOfWork.Repository<Post>().GetAsync(Id);
+                if (post is null || post.creatingUserId != user.Id)
+                {
+                    Response.StatusCode = 400;
+                    return PartialView("HomePartialViews/CreatePost", model);
+                }
+                var postImage = "";
+                if(post.postImageName is not null && post.postImageName != "")
+                    postImage = post.postImageName;
+                 var newImageName = "";
+                try
+                {
+                    post.postText = model.postText;
+                    if (model.postImage is not null)
+                        newImageName = DocumentSettings.UploadFile(model.postImage, "images");
+                    post.postImageName = newImageName;
+                    //_unitOfWork.Repository<Post>().Update(post);
+                    var count = await _unitOfWork.Complete();
+                    if (count == 0)
+                    {
+                        DocumentSettings.DeleteFile(newImageName, "images");
+                        Response.StatusCode = 400;
+                        return PartialView("HomePartialViews/CreatePost", model);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DocumentSettings.DeleteFile(newImageName, "images");
+                    if (_env.IsDevelopment())
+                        ModelState.AddModelError(string.Empty, ex.Message);
+                    ModelState.AddModelError(string.Empty, "An Error Has Occured Adding Post");
+                    Response.StatusCode = 400;
+                    return PartialView("CreatePost", model);
+                }
+                if(postImage is not null && postImage != "")
+                    DocumentSettings.DeleteFile(postImage, "images");
+                
+                var postToReturn = new PostToReturnViewModel
+                {
+                    Id = post.Id,
+                    creatingUserName = user.UserName,
+                    creatingUserImageName = user.profilePictureName,
+                    postText = post.postText,
+                    postImageName = post.postImageName,
+                    DateOfCreation = post.DateOfCreation
+                };
+                return PartialView("HomePartialViews/Post", postToReturn);
+            }
             if (ModelState.IsValid)
             {
                 string postName = "";
@@ -116,7 +216,7 @@ namespace SocialMediaApplication.PL.Controllers
             }
             Response.StatusCode = 400;
             return PartialView("HomePartialViews/CreatePost", model);
-        }
+         }
 
         [HttpPost]
         public async Task<IActionResult> DeletePost([FromBody]string? postId)
@@ -172,14 +272,11 @@ namespace SocialMediaApplication.PL.Controllers
                     success = false
                 });
             }
-            
         }
         public IActionResult Privacy()
         {
             return View();
         }
-
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
