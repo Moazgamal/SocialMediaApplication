@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SocialMediaApplication.BLL.Interfaces;
+using SocialMediaApplication.BLL.Specifications.PostSpecs;
 using SocialMediaApplication.DAL.Models;
 using SocialMediaApplication.PL.Helpers;
+using SocialMediaApplication.PL.Services.Feed;
 using SocialMediaApplication.PL.ViewModels;
 using SocialMediaApplication.PL.ViewModels.Post;
 using System;
@@ -25,17 +27,20 @@ namespace SocialMediaApplication.PL.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _env;
+        private readonly IFeedService _feedService;
 
         public HomeController(
             ILogger<HomeController> logger,
             UserManager<ApplicationUser> userManager,
             IUnitOfWork unitOfWork,
-            IWebHostEnvironment env
+            IWebHostEnvironment env,
+            IFeedService feedService
             )
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _env = env;
+            _feedService = feedService;
             _userManager = userManager;
         }
 
@@ -44,23 +49,10 @@ namespace SocialMediaApplication.PL.Controllers
             var user = await _userManager.GetUserAsync(User);
             //ViewData["currentUserName"] = user.UserName;
             //ViewData["currentUserProfilePicture"] = user.profilePictureName;
-            var posts = await _unitOfWork.Repository<Post>().GetAllAsync() as IEnumerable<Post>;
-            List<PostToReturnViewModel> returnedPosts = new List<PostToReturnViewModel>();
+
+            var posts =  await _feedService.GetFeedAsync(user.Id);
             
-            foreach ( var post in posts)
-            {
-                var newPost = new PostToReturnViewModel
-                {
-                    Id= post.Id,
-                    creatingUserImageName = user.profilePictureName,
-                    creatingUserName = user.UserName,
-                    postImageName = post.postImageName,
-                    postText = post.postText,
-                    DateOfCreation = post.DateOfCreation
-                };
-                returnedPosts.Add(newPost); 
-            }
-            return View("Index", returnedPosts);
+            return View("Index", posts);
         }
         [HttpPost]
         public async Task<IActionResult> GetCreateFormAsync([FromBody]string? postId)

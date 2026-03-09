@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SocialMediaApplication.BLL.Specifications
 {
-    internal static class SpecificationsEvaluator<T> where T : class
+    public static class SpecificationsEvaluator<T> where T : class
     {
         public static IQueryable<T> GetQuery(IQueryable<T> inputQuery,
             ISpecifications<T> spec)

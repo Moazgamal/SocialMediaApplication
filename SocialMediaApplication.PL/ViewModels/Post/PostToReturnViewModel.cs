@@ -10,5 +10,9 @@ namespace SocialMediaApplication.PL.ViewModels.Post
         public string postText { get; set; }
         public string postImageName { get; set; }
         public DateTime DateOfCreation { get; set; }
+        public int NumberOfLikes { get; set; }
+        public int NumberOfComments { get; set; }
+        public int NumberOfShares { get; set; }
+        public bool IsLikedByCurrentUser { get; set; } = false;
     }
 }

@@ -22,5 +22,7 @@ namespace SocialMediaApplication.DAL.Data
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<UserAddFriend> UserAddFriendUsers { get; set; }
+        public DbSet<UserLikePost> UserLikePost { get; set; }
     }
 }

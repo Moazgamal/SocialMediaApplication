@@ -39,7 +39,35 @@
 <div class="created-post-text">
     <textarea readonly>@Model.postText</textarea>
 </div>
+@if(Model.postImageName is not null && Model.postImageName != "")
+{
 <div class="created-post-image">
     <img src="~/files/images/@Model.postImageName" alt="Preview">
+</div>
+}
+
+<div class="Numbers-Container">
+    <div><a href="">@Model.NumberOfLikes</a></div>
+    <div><a href="">@Model.NumberOfComments</a></div>
+    <div><a href="">@Model.NumberOfShares</a></div>
+</div>
+
+<div class="ReactionsButtons">
+    @if(Model.IsLikedByCurrentUser == true){
+        <button  class="like-button color-blue" data-post-id="@Model.Id">
+                <i class="fa fa-thumbs-up"></i> Like
+        </button>
+    }
+    else{
+        <button class="like-button" data-post-id="@Model.Id">
+                <i class="fa fa-thumbs-up"></i> Like
+        </button>
+    }
+    <button>
+        <i class="fa fa-comment"></i> Comment
+    </button>
+    <button>
+        <i class="fa fa-share"></i> Share
+    </button>
 </div>
 </div>

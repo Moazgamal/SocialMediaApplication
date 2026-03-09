@@ -3,6 +3,7 @@ using SocialMediaApplication.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,5 +18,10 @@ namespace SocialMediaApplication.BLL.Interfaces
         void Add(T entity);
         void Update(T entity);
         void Delete(T entity);
+
+        //Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
+        Task<bool> AnyWithSpecAsync(ISpecifications<T> spec);
+        bool AnyWithSpec(ISpecifications<T> spec);
+        Task<IQueryable<T>> GetAllQueryableAsync();
     }
 }

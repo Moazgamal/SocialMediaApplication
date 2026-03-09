@@ -5,6 +5,7 @@ using SocialMediaApplication.DAL.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,6 +41,10 @@ namespace SocialMediaApplication.BLL.Repositories
         {
             return await ApplySpecifications(spec).AsNoTracking().ToListAsync();  
         }
+        public async Task<IQueryable<T>> GetAllQueryableAsync()
+        {
+            return  _dbContext.Set<T>().AsNoTracking();
+        }
 
         public async Task<T?> GetWithSpecAsync(ISpecifications<T> spec)
         {
@@ -48,6 +53,21 @@ namespace SocialMediaApplication.BLL.Repositories
         private IQueryable<T> ApplySpecifications(ISpecifications<T> spec)
         {
             return SpecificationsEvaluator<T>.GetQuery(_dbContext.Set<T>(), spec);
+        }
+
+        //public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+        //{
+        //    return await _dbContext.Set<T>().FirstOrDefaultAsync(predicate);
+        //}
+
+        public async Task<bool> AnyWithSpecAsync(ISpecifications<T> spec)
+        {
+            return await ApplySpecifications(spec).AnyAsync();
+        }
+        public bool AnyWithSpec(ISpecifications<T> spec)
+        {
+            var dummySpec = new BaseSpecifications<T>();
+            return  ApplySpecifications(dummySpec).AsNoTracking().Any(spec.Criteria);
         }
     }
 }

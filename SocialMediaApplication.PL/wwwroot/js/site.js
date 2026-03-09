@@ -199,6 +199,30 @@ document.addEventListener("click", function (e) {
     }
 });
 
+document.addEventListener("click", async function (e) {
+    if (e.target.classList.contains("like-button")) {
+        let buttonElement = e.target;
+        let postId = buttonElement.dataset.postId;
+        let formData = new FormData();
+        formData.append("postId", postId);
+        let response = await fetch("/Post/ToggleLike", {
+            method: "POST",
+            //headers: {
+            //    "Content-Type": "application/json"
+            //},
+            body: formData
+        });
+        if (response.ok) {
+            let result = await response.json();
+
+            if (result.liked) {
+                buttonElement.classList.add("color-blue");
+            } else {
+                buttonElement.classList.remove("color-blue");
+            }
+        }
+    }
+});
 
 
 

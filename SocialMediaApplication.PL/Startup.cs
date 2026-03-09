@@ -11,6 +11,8 @@ using SocialMediaApplication.BLL.Interfaces;
 using SocialMediaApplication.DAL.Data;
 using SocialMediaApplication.DAL.Models;
 using SocialMediaApplication.PL.Services.EmailSender;
+using SocialMediaApplication.PL.Services.Feed;
+using SocialMediaApplication.PL.Services.Post;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +33,8 @@ namespace SocialMediaApplication.PL
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddScoped<IFeedService, FeedService>();
+            services.AddScoped<IPostService, PostService>();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>

@@ -605,6 +605,32 @@ background-color: #e5e5e580;
     background-color: #e5e5e580;
 }
 
+#post .Numbers-Container{
+    display: flex;  
+    justify-content: space-between;
+}
+
+#post .ReactionsButtons{
+    display: flex;
+    justify-content: space-between;
+}
+#post .ReactionsButtons button{
+    width: calc(100%/3);
+    cursor: pointer;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: white;
+    font-size: larger;
+}
+#post .ReactionsButtons button:hover{
+    background-color: #e5e5e580;
+}
+.color-blue{
+    color: cornflowerblue;
+}
+
 
 
 
