@@ -49,9 +49,8 @@ namespace SocialMediaApplication.PL.Controllers
         public async Task<IActionResult> ToggleLike(int postId)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
+
             //if (postId is null)
             //    return NotFound();
 
@@ -75,6 +74,29 @@ namespace SocialMediaApplication.PL.Controllers
             }
             
             return Json(new { liked = false });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetPostLikes(string postId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            int Id;
+
+            bool isValid = int.TryParse(postId, out Id);
+
+            if (!isValid)
+            {
+                Response.StatusCode = 400;
+                return BadRequest();
+            }
+
+            var post = await _unitOfWork.Repository<Post>().GetAsync(Id);
+
+            if (post is null)
+                return NotFound();
+            var likes = await _postService.GetPostLikesAsync(Id);
+            return PartialView("~/Views/Home/HomePartialViews/PostLikes.cshtml", likes);
         }
     }
 }

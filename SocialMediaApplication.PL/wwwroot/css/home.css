@@ -371,6 +371,26 @@ background-color: #e5e5e580;
     display: inline-block;
     position: relative;
 }
+#post .Numbers-Container .likes{
+    cursor: pointer;
+}
+#likes-container{
+    display: none;
+}
+#likes-container.show{
+    display: inline-block;
+    position: relative;
+    width: 300px;
+    height: 150px;
+    overflow-y: auto;
+    z-index: 4;
+}
+#likes-container .user-like{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    
+}
 #create-post {
     position: fixed;
     top: 50%;
@@ -383,6 +403,23 @@ background-color: #e5e5e580;
     display: block;
     transition: 0.3s;
 }
+#likes-container .post-likes{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    z-index: 5;
+    border-radius: 8px;
+    width: 40%;
+    overflow-y: auto;
+    height: 500px;
+    display: block;
+    transition: 0.3s;
+    padding-bottom: 10px;
+}
+
+
 /*#create-post.show{
     display:block;
 }*/
@@ -499,6 +536,7 @@ background-color: #e5e5e580;
     flex-direction: row;
     justify-content: space-between;
 }
+
 #post .post-header .user-name-and-image{
     display:flex;
     flex-direction:row;
@@ -514,10 +552,35 @@ background-color: #e5e5e580;
     height:45px; 
     width:45px
 }
+#likes-container .user-like{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    margin-top: 10px;
+
+}
+
+#likes-container .user-like .user-like-image{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-evenly;
+}
+#likes-container .user-like .user-like-image img{
+    border-radius: 50%;
+    height:45px; 
+    width:45px;
+}
 #post .post-header .user-name-and-image  .post-date-and-user {
     margin-left:15px;
 }
 #post .post-header .user-name-and-image  .post-date-and-user p{
+    margin:0;
+    text-align:start;
+}
+#likes-container .user-like{
+    margin-left:15px;
+}
+#likes-container .user-like p{
     margin:0;
     text-align:start;
 }

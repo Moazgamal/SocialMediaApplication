@@ -47,7 +47,7 @@
 }
 
 <div class="Numbers-Container">
-    <div><a href="">@Model.NumberOfLikes</a></div>
+    <div><a class="likes" data-post-id="@Model.Id" id="likes-of-@Model.Id" >@Model.NumberOfLikes</a></div>
     <div><a href="">@Model.NumberOfComments</a></div>
     <div><a href="">@Model.NumberOfShares</a></div>
 </div>
@@ -67,7 +67,7 @@
         <i class="fa fa-comment"></i> Comment
     </button>
     <button>
-        <i class="fa fa-share"></i> Share
+        <i class="fa fa-share"></i> Share   
     </button>
 </div>
 </div>

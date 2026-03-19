@@ -3,13 +3,16 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SocialMediaApplication.BLL.Interfaces;
 using SocialMediaApplication.BLL.Specifications.PostSpecs;
+using SocialMediaApplication.DAL.Data;
 using SocialMediaApplication.DAL.Models;
 using SocialMediaApplication.PL.Helpers;
 using SocialMediaApplication.PL.Services.Feed;
+using SocialMediaApplication.PL.Services.Post;
 using SocialMediaApplication.PL.ViewModels;
 using SocialMediaApplication.PL.ViewModels.Post;
 using System;
@@ -28,13 +31,17 @@ namespace SocialMediaApplication.PL.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _env;
         private readonly IFeedService _feedService;
+        private readonly IPostService _postService;
+        private readonly ApplicationDbContext _dbContext;
 
         public HomeController(
             ILogger<HomeController> logger,
             UserManager<ApplicationUser> userManager,
             IUnitOfWork unitOfWork,
             IWebHostEnvironment env,
-            IFeedService feedService
+            IFeedService feedService,
+            IPostService postService,
+            ApplicationDbContext dbContext
             )
         {
             _logger = logger;
@@ -42,6 +49,8 @@ namespace SocialMediaApplication.PL.Controllers
             _env = env;
             _feedService = feedService;
             _userManager = userManager;
+            _postService = postService;
+            _dbContext = dbContext;
         }
 
         public async Task<IActionResult> Index()
@@ -125,31 +134,37 @@ namespace SocialMediaApplication.PL.Controllers
                  var newImageName = "";
                 try
                 {
+                    bool isSamePost = post.postText == model.postText;
                     post.postText = model.postText;
                     if (model.postImage is not null)
                         newImageName = DocumentSettings.UploadFile(model.postImage, "images");
                     post.postImageName = newImageName;
                     //_unitOfWork.Repository<Post>().Update(post);
+
                     var count = await _unitOfWork.Complete();
+                    if (isSamePost && count == 0)
+                        count = 1;
                     if (count == 0)
                     {
-                        DocumentSettings.DeleteFile(newImageName, "images");
+                        if(newImageName is not null)
+                            DocumentSettings.DeleteFile(newImageName, "images");
                         Response.StatusCode = 400;
                         return PartialView("HomePartialViews/CreatePost", model);
                     }
                 }
                 catch (Exception ex)
                 {
-                    DocumentSettings.DeleteFile(newImageName, "images");
+                    if(newImageName is not null)
+                        DocumentSettings.DeleteFile(newImageName, "images");
                     if (_env.IsDevelopment())
                         ModelState.AddModelError(string.Empty, ex.Message);
                     ModelState.AddModelError(string.Empty, "An Error Has Occured Adding Post");
                     Response.StatusCode = 400;
-                    return PartialView("CreatePost", model);
+                    return PartialView("HomePartialViews/CreatePost", model);
                 }
                 if(postImage is not null && postImage != "")
                     DocumentSettings.DeleteFile(postImage, "images");
-                
+                var existingLike = await _postService.IFUserLikePostAsync(user.Id, post.Id);
                 var postToReturn = new PostToReturnViewModel
                 {
                     Id = post.Id,
@@ -157,7 +172,9 @@ namespace SocialMediaApplication.PL.Controllers
                     creatingUserImageName = user.profilePictureName,
                     postText = post.postText,
                     postImageName = post.postImageName,
-                    DateOfCreation = post.DateOfCreation
+                    DateOfCreation = post.DateOfCreation,
+                    NumberOfLikes = post.Likes?.Count()??0,
+                    IsLikedByCurrentUser = existingLike!=null
                 };
                 return PartialView("HomePartialViews/Post", postToReturn);
             }
@@ -196,13 +213,16 @@ namespace SocialMediaApplication.PL.Controllers
                     Response.StatusCode = 400;
                     return PartialView("CreatePost", model);
                 }
-                var postToReturn = new PostToReturnViewModel { 
+                var postToReturn = new PostToReturnViewModel
+                {
                     Id = post.Id,
                     creatingUserName = user.UserName,
                     creatingUserImageName = user.profilePictureName,
-                    postText = post.postText, 
-                    postImageName=post.postImageName,
-                    DateOfCreation = post.DateOfCreation
+                    postText = post.postText,
+                    postImageName = post.postImageName,
+                    DateOfCreation = post.DateOfCreation,
+                    NumberOfLikes = post.Likes.Count(),
+                    IsLikedByCurrentUser =  _postService.IFUserLikePostAsync(user.Id, post.Id) == null ?false : true,
                 };
                 return PartialView("HomePartialViews/Post", postToReturn);
             }

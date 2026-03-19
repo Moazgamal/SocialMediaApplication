@@ -2,7 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using SocialMediaApplication.DAL.Data;
 using SocialMediaApplication.DAL.Models;
+using SocialMediaApplication.PL.ViewModels.User;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,6 +19,12 @@ namespace SocialMediaApplication.PL.Services.Post
         {
             _dbContext = dbContext;
         }
+        public async Task<UserLikePost?> IFUserLikePostAsync(string userId, int postId)
+        {
+            var existingLike = await _dbContext.UserLikePost
+                .FirstOrDefaultAsync(l => l.userId == userId && l.postId == postId);
+            return existingLike;
+        }
         public async Task<int> ToggleLikeAsync(string userId, int postId)
         {
             // 1️⃣ Check if user can interact
@@ -24,8 +33,7 @@ namespace SocialMediaApplication.PL.Services.Post
                 return 0; 
 
             // 2️⃣ Check if like already exists
-            var existingLike = await _dbContext.UserLikePost
-                .FirstOrDefaultAsync(l => l.userId == userId && l.postId == postId);
+            var existingLike = await IFUserLikePostAsync(userId,postId);   
 
             if (existingLike == null)
             {
@@ -56,7 +64,20 @@ namespace SocialMediaApplication.PL.Services.Post
                 )
             );
         }
+        public async Task<List<UserLikeViewModel>> GetPostLikesAsync(int postId)
+        {
+            var likes =  await _dbContext.UserLikePost
+                    .AsNoTracking()
+                    .Where(l => l.postId == postId)
+                    .Select(l => new UserLikeViewModel
+                    {
+                        UserName = l.user.UserName,
+                        ProfilePictureName = l.user.profilePictureName
+                    })
+                    .ToListAsync();
+            return likes;
+        }
 
-        
+
     }
 }

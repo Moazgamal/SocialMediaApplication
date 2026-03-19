@@ -6,13 +6,23 @@
 let btn = document.getElementById("post-text");
 let modal = document.getElementById("modal-div");
 let createPostForm = document.getElementById("form-container");
+let likesContainer = document.getElementById("likes-container");
 
-
+// (Show - Hide) Modal & Create-Post Form
 modal.onclick = function () {
-    createPostForm.classList.toggle("show");
-    $("#form-container").html("")
+    if (createPostForm.classList.contains("show")) {
+        $("#form-container").html("");
+        createPostForm.classList.toggle("show");
+    }
+    if (likesContainer.classList.contains("show")) {
+        $("#likes-container").html("");
+        likesContainer.classList.toggle("show");
+    }
     modal.classList.toggle("show");
 };
+
+
+// Get Create-Post Form From Server
 $("#post-text").click(function () {
     modal.classList.add("show");
     createPostForm.classList.add("show");
@@ -35,6 +45,8 @@ $("#post-text").click(function () {
         });
 });
 
+
+// Load Create Post Form Events
 function loadFormEvents() {
     let closeButton = document.getElementById("close");
     closeButton.onclick = function () {
@@ -66,6 +78,7 @@ function loadFormEvents() {
     });
 };
 
+
 let postsContainer = document.getElementById("all-posts");
 
 $(document).ready(function () {
@@ -74,6 +87,7 @@ $(document).ready(function () {
 
 });
 
+// Create Post
 function bindCreatePostForm(currentPost, postId) {
     $("#create-post").validate({
 
@@ -90,6 +104,7 @@ function bindCreatePostForm(currentPost, postId) {
                     
                     if (result.includes("create-post")) {
                         $("#form-container").html(result);
+                        loadFormEvents();
                         bindCreatePostForm();
                     } else if (currentPost && postId && postId !== null) {
                         console.log("2");
@@ -116,6 +131,8 @@ function bindCreatePostForm(currentPost, postId) {
     });
 }
 
+
+// Show Post Options, Update Post, Delete Post
 document.addEventListener("click", function (e) {
     if (e.target.classList.contains("setting-points-container")) {
         let postUserSettings = document.getElementById(`post-user-settings-${e.target.dataset.postId}`);
@@ -199,6 +216,8 @@ document.addEventListener("click", function (e) {
     }
 });
 
+
+// Toggle Like
 document.addEventListener("click", async function (e) {
     if (e.target.classList.contains("like-button")) {
         let buttonElement = e.target;
@@ -214,15 +233,52 @@ document.addEventListener("click", async function (e) {
         });
         if (response.ok) {
             let result = await response.json();
+            let likesanchor = document.getElementById(`likes-of-${postId}`);
+            let currentNumber = parseInt(likesanchor.textContent);
 
             if (result.liked) {
                 buttonElement.classList.add("color-blue");
+                likesanchor.textContent = currentNumber + 1;
             } else {
                 buttonElement.classList.remove("color-blue");
+                likesanchor.textContent = currentNumber - 1;
+
             }
         }
     }
 });
+
+document.addEventListener("click", async function (e) {
+    if (e.target.classList.contains("likes")) {
+        let buttonElement = e.target;
+        let postId = buttonElement.dataset.postId;
+        let formData = new FormData();
+        formData.append("postId", postId);
+        let response = await fetch("/Post/GetPostLikes", {
+            method: "POST",
+            //headers: {
+            //    "Content-Type": "application/json"
+            //},
+            body: formData
+        });
+        if (response.ok) {
+            modal.classList.add("show");
+            likesContainer.classList.add("show");
+            let result = await response.text();
+            console.log(result);
+            $("#likes-container").html(result);
+            //loadLikesDivEvents();
+        }
+        
+    }
+});
+
+
+
+
+
+
+
 
 
 
