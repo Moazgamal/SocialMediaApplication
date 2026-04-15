@@ -22,5 +22,8 @@ namespace SocialMediaApplication.DAL.Models
         public ICollection<UserLikePost> Likes { get; set; }
         //public ICollection<ApplicationUser>? Likes { get; set; }
 
+        public ICollection<Comment>? Comments { get; set; }
+
+
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SocialMediaApplication.DAL.Data;
 using SocialMediaApplication.DAL.Models;
+using SocialMediaApplication.PL.ViewModels.Post;
 using SocialMediaApplication.PL.ViewModels.User;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,9 @@ namespace SocialMediaApplication.PL.Services.Post
         }
         public async Task<UserLikePost?> IFUserLikePostAsync(string userId, int postId)
         {
-            var existingLike = await _dbContext.UserLikePost
+            var existingLike =   _dbContext.UserLikePost
                 .FirstOrDefaultAsync(l => l.userId == userId && l.postId == postId);
-            return existingLike;
+            return await existingLike;
         }
         public async Task<int> ToggleLikeAsync(string userId, int postId)
         {
@@ -78,6 +79,6 @@ namespace SocialMediaApplication.PL.Services.Post
             return likes;
         }
 
-
+       
     }
 }

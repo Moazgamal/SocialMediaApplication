@@ -24,5 +24,7 @@ namespace SocialMediaApplication.DAL.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<UserAddFriend> UserAddFriendUsers { get; set; }
         public DbSet<UserLikePost> UserLikePost { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<CommentLike> UserLikeComment { get; set; }
     }
 }

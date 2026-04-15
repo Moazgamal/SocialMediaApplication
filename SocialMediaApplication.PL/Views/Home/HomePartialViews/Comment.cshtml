@@ -1,0 +1,30 @@
+﻿@using SocialMediaApplication.PL.ViewModels.Comment
+@model CommentToReturnViewModel
+
+<div class="comment" id="comment-@Model.Id">
+
+    <img src="~/files/images/@Model.UserImageName" class="user-image"/>
+
+    <div>
+        <strong>@Model.UserName</strong>
+        <p>@Model.Content</p>
+
+        <div>
+            <span>@Model.NumberOfLikes</span>
+
+            @if(Model.IsLikedByCurrentUser)
+            {
+                <button class="like-comment color-blue" data-comment-id="@Model.Id">
+                    Like
+                </button>
+            }
+            else
+            {
+                <button class="like-comment" data-comment-id="@Model.Id">
+                    Like
+                </button>
+            }
+        </div>
+    </div>
+
+</div>

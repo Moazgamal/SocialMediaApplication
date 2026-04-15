@@ -1,0 +1,16 @@
+﻿@model PostWithCommentsViewModel
+
+
+<partial name="~/Views/Home/HomePartialViews/Post.cshtml" model="Model.Post" />
+
+<hr />
+
+<div id="comments-container">
+    @if(Model.Comments is not null && Model.Comments.Count()>0)
+    {
+        @foreach (var comment in Model.Comments)
+        {
+            <partial name="~/Views/Home/HomePartialViews/Comment.cshtml" model="comment" />
+        }
+    }
+</div>

@@ -7,6 +7,7 @@ let btn = document.getElementById("post-text");
 let modal = document.getElementById("modal-div");
 let createPostForm = document.getElementById("form-container");
 let likesContainer = document.getElementById("likes-container");
+let postWithCommentsContainer = document.getElementById("post-with-comments-container");
 
 // (Show - Hide) Modal & Create-Post Form
 modal.onclick = function () {
@@ -17,6 +18,10 @@ modal.onclick = function () {
     if (likesContainer.classList.contains("show")) {
         $("#likes-container").html("");
         likesContainer.classList.toggle("show");
+    }
+    if (postWithCommentsContainer.classList.contains("show")) {
+        //$("#post-with-comments-container").html("");
+        postWithCommentsContainer.classList.toggle("show");
     }
     modal.classList.toggle("show");
 };
@@ -248,6 +253,8 @@ document.addEventListener("click", async function (e) {
     }
 });
 
+// Show Likes
+
 document.addEventListener("click", async function (e) {
     if (e.target.classList.contains("likes")) {
         let buttonElement = e.target;
@@ -272,6 +279,53 @@ document.addEventListener("click", async function (e) {
         
     }
 });
+
+// Show Post With Comments
+
+document.addEventListener("click", async function (e) {
+    if (e.target.classList.contains("comment-button")) {
+        modal.classList.toggle("show");
+
+        postWithCommentsContainer.classList.add("show");
+
+        let buttonElement = e.target;
+
+        let postId = buttonElement.dataset.postId;
+
+        let userName = buttonElement.dataset.userName;
+
+        let postOwnerName = document.getElementById("post-owner-name");
+        postOwnerName.innerText = userName + '\'s Post';
+
+        let postResponse = await fetch(`/POST/GetPostWithComments?postId=${postId}`, {
+            method: "GET",
+        });
+
+        let postHtml = await postResponse.text();
+        
+        console.log(postHtml);
+        let postWithCommentsBody = document.getElementById("postWithCommentsBody");
+        postWithCommentsBody.innerHTML = postHtml;
+
+        ////let formData = new FormData();
+        ////formData.append("postId", postId);
+        //let header = document.createElement("div");
+        //header.classList.add("post-with-comments-header");
+        //let 
+
+
+
+    }
+});
+
+// close post with comments 
+document.addEventListener("click", async function (e) {
+    if (e.target.id==="close-post-btn") {
+
+    }
+});
+
+
 
 
 

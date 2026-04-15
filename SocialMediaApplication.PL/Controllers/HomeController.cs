@@ -221,14 +221,15 @@ namespace SocialMediaApplication.PL.Controllers
                     postText = post.postText,
                     postImageName = post.postImageName,
                     DateOfCreation = post.DateOfCreation,
-                    NumberOfLikes = post.Likes.Count(),
-                    IsLikedByCurrentUser =  _postService.IFUserLikePostAsync(user.Id, post.Id) == null ?false : true,
+                    NumberOfLikes = post.Likes == null ? 0 :post.Likes.Count(),
+                    IsLikedByCurrentUser =  await _postService.IFUserLikePostAsync(user.Id, post.Id) is null? false: true ,
                 };
                 return PartialView("HomePartialViews/Post", postToReturn);
             }
             Response.StatusCode = 400;
             return PartialView("HomePartialViews/CreatePost", model);
          }
+
 
         [HttpPost]
         public async Task<IActionResult> DeletePost([FromBody]string? postId)

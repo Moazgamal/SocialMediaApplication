@@ -20,5 +20,7 @@ namespace SocialMediaApplication.DAL.Models
         public ICollection<UserAddFriend>? Friends { get; set; }
         public ICollection<UserAddFriend>? FriendsBy { get; set; }
 
+        public ICollection<Comment>? Comments { get; set; }
+
     }
 }
