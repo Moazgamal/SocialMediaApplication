@@ -3,7 +3,7 @@
 <div class="post-header">
     <input type="hidden" name="PostId" value="@Model.Id" readonly/>
     <div class="user-name-and-image">
-         <div class="post-username"><img class="user-image" src="~/files/images/@Model.creatingUserImageName" alt="User Image" /></div> 
+         <div class="post-username"><img class="user-image" src="~/files/images/Users/@Model.creatingUserImageName" alt="User Image" /></div> 
         @* <div class="post-username"><img class="user-image" src="~/images/@Model.creatingUser.profilePictureName" alt="User Image" /></div> *@
         <div class="post-date-and-user">
             <p style="font-size:18px;margin:0px;margin-bottom:3px; font-weight:bold; font-family:Calibri;">@Model.creatingUserName</p> 
@@ -41,9 +41,9 @@
 </div>
 @if(Model.postImageName is not null && Model.postImageName != "")
 {
-<div class="created-post-image">
-    <img src="~/files/images/@Model.postImageName" alt="Preview">
-</div>
+    <div class="created-post-image">
+        <img src="~/files/images/Posts/@Model.postImageName" alt="Preview">
+    </div>
 }
 
 <div class="Numbers-Container">

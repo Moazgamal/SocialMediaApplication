@@ -33,6 +33,7 @@ namespace SocialMediaApplication.PL.Services.Feed
             {
                 Id = p.Id,
                 postText = p.postText,
+                postImageName = p.postImageName,
                 creatingUserName = p.creatingUser.UserName,
                 creatingUserImageName = p.creatingUser.profilePictureName,
                 NumberOfLikes = p.Likes.Count(),

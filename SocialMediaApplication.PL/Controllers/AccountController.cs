@@ -47,7 +47,7 @@ namespace SocialMediaApplication.PL.Controllers
                 var user = await _userManager.FindByNameAsync(model.UserName);
                 if(user is null)
                 {
-                    var fileName = DocumentSettings.UploadFile(model.profilePicture, "images");
+                    var fileName = DocumentSettings.UploadFile(model.profilePicture, "images/Users");
                     user = new ApplicationUser()
                     {
                         UserName = model.UserName,
@@ -62,7 +62,7 @@ namespace SocialMediaApplication.PL.Controllers
                         return RedirectToAction(nameof(SignIn));
                     foreach(var error in result.Errors)
                         ModelState.AddModelError(string.Empty, error.Description);
-                    DocumentSettings.DeleteFile(fileName, "images");
+                    DocumentSettings.DeleteFile(fileName, "images/Users");
 
                 }
                 else

@@ -134,28 +134,25 @@ namespace SocialMediaApplication.PL.Controllers
                  var newImageName = "";
                 try
                 {
-                    bool isSamePost = post.postText == model.postText;
                     post.postText = model.postText;
                     if (model.postImage is not null)
-                        newImageName = DocumentSettings.UploadFile(model.postImage, "images");
+                        newImageName = DocumentSettings.UploadFile(model.postImage, "images/Posts");
                     post.postImageName = newImageName;
                     //_unitOfWork.Repository<Post>().Update(post);
 
                     var count = await _unitOfWork.Complete();
-                    if (isSamePost && count == 0)
-                        count = 1;
                     if (count == 0)
                     {
-                        if(newImageName is not null)
-                            DocumentSettings.DeleteFile(newImageName, "images");
+                        if(newImageName is not null && newImageName != "")
+                            DocumentSettings.DeleteFile(newImageName, "images/Posts");
                         Response.StatusCode = 400;
                         return PartialView("HomePartialViews/CreatePost", model);
                     }
                 }
                 catch (Exception ex)
                 {
-                    if(newImageName is not null)
-                        DocumentSettings.DeleteFile(newImageName, "images");
+                    if(newImageName is not null && newImageName != "")
+                        DocumentSettings.DeleteFile(newImageName, "images/Posts");
                     if (_env.IsDevelopment())
                         ModelState.AddModelError(string.Empty, ex.Message);
                     ModelState.AddModelError(string.Empty, "An Error Has Occured Adding Post");
@@ -163,7 +160,7 @@ namespace SocialMediaApplication.PL.Controllers
                     return PartialView("HomePartialViews/CreatePost", model);
                 }
                 if(postImage is not null && postImage != "")
-                    DocumentSettings.DeleteFile(postImage, "images");
+                    DocumentSettings.DeleteFile(postImage, "images/Posts");
                 var existingLike = await _postService.IFUserLikePostAsync(user.Id, post.Id);
                 var postToReturn = new PostToReturnViewModel
                 {
@@ -171,7 +168,7 @@ namespace SocialMediaApplication.PL.Controllers
                     creatingUserName = user.UserName,
                     creatingUserImageName = user.profilePictureName,
                     postText = post.postText,
-                    postImageName = post.postImageName,
+                    postImageName = post.postImageName != "" ? post.postImageName : null,
                     DateOfCreation = post.DateOfCreation,
                     NumberOfLikes = post.Likes?.Count()??0,
                     IsLikedByCurrentUser = existingLike!=null
@@ -182,7 +179,7 @@ namespace SocialMediaApplication.PL.Controllers
             {
                 string postName = "";
                 if(model.postImage is not null)
-                    postName = DocumentSettings.UploadFile(model.postImage, "images");
+                    postName = DocumentSettings.UploadFile(model.postImage, "images/Posts");
                 var user =  await _userManager.GetUserAsync(User);
                 var post = new Post {
                     creatingUserId = user.Id,
@@ -197,7 +194,7 @@ namespace SocialMediaApplication.PL.Controllers
                     {
                         // delete the image
                         if(postName != "")
-                            DocumentSettings.DeleteFile(postName, "images");
+                            DocumentSettings.DeleteFile(postName, "images/Posts");
                         Response.StatusCode = 400;
                         return PartialView("HomePartialViews/CreatePost", model);
                     }
@@ -206,7 +203,7 @@ namespace SocialMediaApplication.PL.Controllers
                 {
                     // delete the image
                     if (postName != "")
-                        DocumentSettings.DeleteFile(postName, "images");
+                        DocumentSettings.DeleteFile(postName, "images/Posts");
                     if (_env.IsDevelopment())
                         ModelState.AddModelError(string.Empty, ex.Message);
                     ModelState.AddModelError(string.Empty, "An Error Has Occured Adding Post");
@@ -269,7 +266,7 @@ namespace SocialMediaApplication.PL.Controllers
                     });
                 }
                 if (postImage is not null && postImage != "")
-                    DocumentSettings.DeleteFile(postImage, "images");
+                    DocumentSettings.DeleteFile(postImage, "images/Posts");
                 return Json(new
                 {
                     success = true,

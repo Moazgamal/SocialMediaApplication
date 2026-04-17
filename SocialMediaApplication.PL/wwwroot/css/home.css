@@ -776,6 +776,36 @@ background-color: #e5e5e580;
     
 }
 
+#no-posts-div1{
+    position: relative;
+    display:flex;
+    flex-direction: column;
+    padding: 20px;
+    margin-top: 40px;
+    margin-left: 20px;
+    margin-right: 40px;
+    display: flex;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    flex-direction: column;
+    background-color: white;
+
+}
+#no-posts-div2{
+    position: relative;
+    display:none;
+    flex-direction: column;
+    padding: 20px;
+    margin-top: 40px;
+    margin-left: 20px;
+    margin-right: 40px;
+    display: flex;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    flex-direction: column;
+    background-color: white;
+}
+
 
 
 

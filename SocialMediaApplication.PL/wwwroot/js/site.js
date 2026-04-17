@@ -8,6 +8,10 @@ let modal = document.getElementById("modal-div");
 let createPostForm = document.getElementById("form-container");
 let likesContainer = document.getElementById("likes-container");
 let postWithCommentsContainer = document.getElementById("post-with-comments-container");
+let allPostsDiv = document.getElementById("all-posts");
+let noPostsDiv1 = document.getElementById("no-posts-div1");
+let noPostsDiv2 = document.getElementById("no-posts-div2");
+
 
 // (Show - Hide) Modal & Create-Post Form
 modal.onclick = function () {
@@ -127,6 +131,13 @@ function bindCreatePostForm(currentPost, postId) {
                         createPostForm.classList.toggle("show");
                         $("#form-container").html("");
                         modal.classList.toggle("show");
+                        if (document.getElementById("no-posts-div1") && window.getComputedStyle(noPostsDiv1).display === "flex") {
+                            document.getElementById("no-posts-div1").style.display = "none";
+                        }
+                        if (document.getElementById("no-posts-div2")  && window.getComputedStyle(noPostsDiv2).display === "flex") {
+                            document.getElementById("no-posts-div2").style.display = "none";
+                        }
+                       
                         $("#all-posts").prepend(result);
                     }
                     
@@ -178,6 +189,9 @@ document.addEventListener("click", function (e) {
         let parent = currentPost.parentNode;
         let nextSibling = currentPost.nextSibling;
         currentPost.remove();
+        if (allPostsDiv.children.length === 0) {
+            document.getElementById("no-posts-div2").style.display = "flex";
+        }
         fetch("/Home/DeletePost", {
             method: "POST",
             headers: {
@@ -190,10 +204,14 @@ document.addEventListener("click", function (e) {
             .then(res => res.json())
             .then(result => {
                 if (result.success === false) {
-                    parent.insertBefore(post, nextSibling);
+                    if (allPostsDiv.children.length === 0)
+                        document.getElementById("no-posts-div2").style.display = "none";
+                    parent.insertBefore(currentPost, nextSibling);
                 }
 
             }).catch(() => {
+                if (allPostsDiv.children.length === 0)
+                    document.getElementById("no-posts-div2").style.display = "none";
                 parent.insertBefore(currentPost, nextSibling);
             });
     }
@@ -307,6 +325,9 @@ document.addEventListener("click", async function (e) {
         let postWithCommentsBody = document.getElementById("postWithCommentsBody");
         postWithCommentsBody.innerHTML = postHtml;
 
+        let closePostButton = document.getElementById("close-post-btn");
+        closePostButton.dataset.postId = postId;
+
         ////let formData = new FormData();
         ////formData.append("postId", postId);
         //let header = document.createElement("div");
@@ -320,7 +341,17 @@ document.addEventListener("click", async function (e) {
 
 // close post with comments 
 document.addEventListener("click", async function (e) {
-    if (e.target.id==="close-post-btn") {
+    if (e.target.id === "close-post-btn") {
+
+        let postId = e.target.dataset.postId;
+
+        let temp = document.createElement("div");
+        temp.innerHTML = result;
+
+        let newElement = temp.firstElementChild;
+
+        currentPost.replaceWith(newElement);
+
 
     }
 });

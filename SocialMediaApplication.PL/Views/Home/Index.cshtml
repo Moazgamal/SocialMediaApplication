@@ -107,16 +107,14 @@
              </button>
          </div>
          <div class="posts">
-            @if (Model is null || Model.Count() == 0)
-             { 
-                <span>Currently, there are no posts available. Would you like to create the first one?</span>
-             } 
-            else 
-            {
+                @if (Model is null || Model.Count() == 0)
+                { 
+                    <div id="no-posts-div1">Currently, there are no posts available. Would you like to create the first one?</div>
+                }
+                <div id="no-posts-div2" style="display:none;">Currently, there are no posts available. Would you like to create the first one?</div>
                 <div id="all-posts">
                     <partial name="HomePartialViews/Posts" model="Model"/>
                 </div>
-            }
          </div>
             
      </div>
