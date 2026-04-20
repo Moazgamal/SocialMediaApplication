@@ -14,21 +14,36 @@ let noPostsDiv2 = document.getElementById("no-posts-div2");
 
 
 // (Show - Hide) Modal & Create-Post Form
-modal.onclick = function () {
-    if (createPostForm.classList.contains("show")) {
-        $("#form-container").html("");
-        createPostForm.classList.toggle("show");
+document.addEventListener("click", function (e) {
+    if (e.target.id=="modal-div") {
+
+        if (postWithCommentsContainer.classList.contains("show")) {
+
+            if (window.getComputedStyle(e.target).zIndex == "2") {
+                console.log("fasfasdfasdf");
+                let postWithCommentsBody = document.getElementById("postWithCommentsBody");
+                postWithCommentsBody.innerHTML = "";
+                postWithCommentsContainer.classList.toggle("show");
+                e.target.classList.toggle("show");
+            } else {
+                createPostForm.innerHTML = "";
+                createPostForm.classList.toggle("show");
+                e.target.classList.add("show");
+                e.target.style.zIndex = "2";
+            }
+        }
+        else if (createPostForm.classList.contains("show")) {
+            $("#form-container").html("");
+            createPostForm.classList.toggle("show");
+            e.target.classList.toggle("show");
+        }
+        else if (likesContainer.classList.contains("show")) {
+            $("#likes-container").html("");
+            likesContainer.classList.toggle("show");
+            e.target.classList.toggle("show");
+        }
     }
-    if (likesContainer.classList.contains("show")) {
-        $("#likes-container").html("");
-        likesContainer.classList.toggle("show");
-    }
-    if (postWithCommentsContainer.classList.contains("show")) {
-        //$("#post-with-comments-container").html("");
-        postWithCommentsContainer.classList.toggle("show");
-    }
-    modal.classList.toggle("show");
-};
+});
 
 
 // Get Create-Post Form From Server
@@ -59,9 +74,16 @@ $("#post-text").click(function () {
 function loadFormEvents() {
     let closeButton = document.getElementById("close");
     closeButton.onclick = function () {
-        createPostForm.classList.toggle("show");
-        $("#form-container").html("");
-        modal.classList.toggle("show");
+        if (window.getComputedStyle(modal).zIndex == "2") {
+            createPostForm.classList.toggle("show");
+            $("#form-container").html("");
+            modal.classList.toggle("show");
+        }
+        else {
+            $("#form-container").html("");
+            createPostForm.classList.toggle("show");
+            modal.style.zIndex = "2";
+        }
     };
     const imgInput = document.getElementById('imgInput');
     const uploadBtn = document.getElementById('uploadBtn');
@@ -97,7 +119,7 @@ $(document).ready(function () {
 });
 
 // Create Post
-function bindCreatePostForm(currentPost, postId) {
+function bindCreatePostForm(currentPost, currentPostWithComments, postId) {
     $("#create-post").validate({
 
         submitHandler: function (form) {
@@ -116,15 +138,26 @@ function bindCreatePostForm(currentPost, postId) {
                         loadFormEvents();
                         bindCreatePostForm();
                     } else if (currentPost && postId && postId !== null) {
+
                         console.log("2");
                         createPostForm.classList.toggle("show");
                         $("#form-container").html("");
-                        modal.classList.toggle("show");
                         let temp = document.createElement("div");
                         temp.innerHTML = result;
 
                         let newElement = temp.firstElementChild;
 
+                        let clonedElement = newElement.cloneNode(true);
+
+                        if (currentPostWithComments) {
+                            modal.style.zIndex = "2";
+
+                            currentPostWithComments.replaceWith(clonedElement);
+
+                        }
+                        else {
+                            modal.classList.toggle("show");
+                        }
                         currentPost.replaceWith(newElement);
                     }
                     else{
@@ -216,7 +249,11 @@ document.addEventListener("click", function (e) {
             });
     }
     else if (e.target.classList.contains("Update-Post")) {
-        let currentPost = document.getElementsByClassName(`post-${e.target.dataset.postId}`)[0];
+        let currentPost = allPostsDiv.getElementsByClassName(`post-${e.target.dataset.postId}`)[0];
+        let currentPostWithComments = postWithCommentsContainer.getElementsByClassName(`post-${e.target.dataset.postId}`)[0];
+        console.log("dfsadfads");
+        console.log(currentPostWithComments);
+        
         fetch("/Home/GetCreateForm",
             {
                 method: "POST",
@@ -229,12 +266,18 @@ document.addEventListener("click", function (e) {
             })
             .then(res => res.text())
             .then(result => {
-                modal.classList.toggle("show");
+                
+                if (postWithCommentsContainer.classList.contains("show")) {
+                    modal.style.zIndex = "4";
+                }
+                else
+                    modal.classList.toggle("show");
                 console.log(result);
-                createPostForm.classList.toggle("show");
-                $("#form-container").html(result);
+                createPostForm.classList.add("show");
+                console.log("iiiiiiiiiiiii");
+                createPostForm.innerHTML = result;
                 loadFormEvents();
-                bindCreatePostForm(currentPost, e.target.dataset.postId);
+                bindCreatePostForm(currentPost, currentPostWithComments, e.target.dataset.postId);
             });
     }
 });
