@@ -20,7 +20,7 @@ document.addEventListener("click", function (e) {
         if (postWithCommentsContainer.classList.contains("show")) {
 
             if (window.getComputedStyle(e.target).zIndex == "2") {
-                console.log("fasfasdfasdf");
+                //console.log("fasfasdfasdf");
                 let postWithCommentsBody = document.getElementById("postWithCommentsBody");
                 postWithCommentsBody.innerHTML = "";
                 postWithCommentsContainer.classList.toggle("show");
@@ -136,7 +136,7 @@ function bindCreatePostForm(currentPost, currentPostWithComments, postId) {
                     if (result.includes("create-post")) {
                         $("#form-container").html(result);
                         loadFormEvents();
-                        bindCreatePostForm();
+                        bindCreatePostForm(currentPost, currentPostWithComments, postId);
                     } else if (currentPost && postId && postId !== null) {
 
                         console.log("2");
@@ -217,11 +217,16 @@ document.addEventListener("click", function (e) {
         }
     }
     else if (e.target.classList.contains("Delete-Post")) {
+        let currentPost = allPostsDiv.getElementsByClassName(`post-${e.target.dataset.postId}`)[0];
+        
+        
+
         let postUserSettings = document.getElementById(`post-user-settings-${e.target.dataset.postId}`);
-        let currentPost = document.getElementsByClassName(`post-${e.target.dataset.postId}`)[0];
         let parent = currentPost.parentNode;
         let nextSibling = currentPost.nextSibling;
+
         currentPost.remove();
+        
         if (allPostsDiv.children.length === 0) {
             document.getElementById("no-posts-div2").style.display = "flex";
         }
@@ -236,6 +241,11 @@ document.addEventListener("click", function (e) {
         })
             .then(res => res.json())
             .then(result => {
+                if(result.success === true){
+                    if(postWithCommentsContainer.classList.contains("show")){
+                        modal.click();
+                    }
+                }
                 if (result.success === false) {
                     if (allPostsDiv.children.length === 0)
                         document.getElementById("no-posts-div2").style.display = "none";
@@ -245,6 +255,7 @@ document.addEventListener("click", function (e) {
             }).catch(() => {
                 if (allPostsDiv.children.length === 0)
                     document.getElementById("no-posts-div2").style.display = "none";
+
                 parent.insertBefore(currentPost, nextSibling);
             });
     }
@@ -299,17 +310,39 @@ document.addEventListener("click", async function (e) {
         });
         if (response.ok) {
             let result = await response.json();
-            let likesanchor = document.getElementById(`likes-of-${postId}`);
+            let currentPost = allPostsDiv.getElementsByClassName(`post-${postId}`)[0];
+            let likesanchor = currentPost.querySelector(`#likes-of-${postId}`);
             let currentNumber = parseInt(likesanchor.textContent);
 
-            if (result.liked) {
-                buttonElement.classList.add("color-blue");
-                likesanchor.textContent = currentNumber + 1;
-            } else {
-                buttonElement.classList.remove("color-blue");
-                likesanchor.textContent = currentNumber - 1;
-
+            if (postWithCommentsContainer.classList.contains("show")) {
+                if(result.liked){
+                    buttonElement.classList.add("color-blue");
+                    likesanchor.textContent = currentNumber + 1;
+                    let likesanchorForPostWithComments = postWithCommentsContainer.querySelector(`#likes-of-${postId}`);
+                    likesanchorForPostWithComments.textContent = currentNumber + 1;
+                    let likesButton = currentPost.querySelector(`#like-button-of-${postId}`);
+                    likesButton.classList.add("color-blue");
+                }
+                else {
+                    buttonElement.classList.remove("color-blue");
+                    likesanchor.textContent = currentNumber - 1;
+                    let likesanchorForPostWithComments = postWithCommentsContainer.querySelector(`#likes-of-${postId}`);
+                    likesanchorForPostWithComments.textContent = currentNumber - 1;
+                    let likesButton = currentPost.querySelector(`#like-button-of-${postId}`);
+                    likesButton.classList.remove("color-blue");
+                }
             }
+            else {
+                if(result.liked){
+                    buttonElement.classList.add("color-blue");
+                    likesanchor.textContent = currentNumber + 1;
+
+                } else {
+                    buttonElement.classList.remove("color-blue");
+                    likesanchor.textContent = currentNumber - 1;
+                }
+            }
+            
         }
     }
 });
@@ -364,7 +397,7 @@ document.addEventListener("click", async function (e) {
 
         let postHtml = await postResponse.text();
         
-        console.log(postHtml);
+        //console.log(postHtml);
         let postWithCommentsBody = document.getElementById("postWithCommentsBody");
         postWithCommentsBody.innerHTML = postHtml;
 

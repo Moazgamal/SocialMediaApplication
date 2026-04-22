@@ -54,12 +54,12 @@
 
 <div class="ReactionsButtons">
     @if(Model.IsLikedByCurrentUser == true){
-        <button  class="like-button color-blue" data-post-id="@Model.Id">
+        <button id="like-button-of-@Model.Id"  class="like-button color-blue" data-post-id="@Model.Id">
                 <i class="fa fa-thumbs-up"></i> Like
         </button>
     }
     else{
-        <button class="like-button" data-post-id="@Model.Id">
+        <button id="like-button-of-@Model.Id" class="like-button" data-post-id="@Model.Id">
                 <i class="fa fa-thumbs-up"></i> Like
         </button>
     }

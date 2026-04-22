@@ -256,6 +256,11 @@ namespace SocialMediaApplication.PL.Controllers
             var postImage = post.postImageName;
             try
             {
+                var likes = _dbContext.UserLikePost
+                                .Where(l => l.postId == Id);
+
+                _dbContext.UserLikePost.RemoveRange(likes);
+
                 _unitOfWork.Repository<Post>().Delete(post);
                 var count = await _unitOfWork.Complete();
                 if (count == 0)
