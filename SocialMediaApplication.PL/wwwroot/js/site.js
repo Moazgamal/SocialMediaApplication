@@ -120,12 +120,19 @@ $(document).ready(function () {
 
 // Create Post
 function bindCreatePostForm(currentPost, currentPostWithComments, postId) {
-    $("#create-post").validate({
+    let form = $("#create-post");
+
+    form.removeData("validator");
+    form.removeData("unobtrusiveValidation");
+    form.validate({
 
         submitHandler: function (form) {
             let formData = new FormData(form);
             if(postId)
                 formData.append("postId", postId);
+            let submitBtn = $(form).find("button[type='submit']");
+            submitBtn.prop("disabled", true); // 🔒 منع double submit
+
             fetch("/Home/AddOrUpdatePost", {
                 method: "POST",
                 body: formData
@@ -173,9 +180,16 @@ function bindCreatePostForm(currentPost, currentPostWithComments, postId) {
                        
                         $("#all-posts").prepend(result);
                     }
-                    
-                });
-            return false;
+                   })
+                    .catch(err => {
+                        console.error(err);
+                        alert("Something went wrong");
+                    })
+                    .finally(() => {
+                        submitBtn.prop("disabled", false); // 🔓 رجّع الزرار
+                    });
+
+                return false;
         }
     });
 }
@@ -378,59 +392,306 @@ document.addEventListener("click", async function (e) {
 
 document.addEventListener("click", async function (e) {
     if (e.target.classList.contains("comment-button")) {
-        modal.classList.toggle("show");
+        if(!postWithCommentsContainer.classList.contains("show")){
+            modal.classList.toggle("show");
 
-        postWithCommentsContainer.classList.add("show");
+            postWithCommentsContainer.classList.add("show");
 
-        let buttonElement = e.target;
+            let buttonElement = e.target;
 
-        let postId = buttonElement.dataset.postId;
+            let postId = buttonElement.dataset.postId;
 
-        let userName = buttonElement.dataset.userName;
+            let userName = buttonElement.dataset.userName;
 
-        let postOwnerName = document.getElementById("post-owner-name");
-        postOwnerName.innerText = userName + '\'s Post';
+            let postOwnerName = document.getElementById("post-owner-name");
+            postOwnerName.innerText = userName + '\'s Post';
 
-        let postResponse = await fetch(`/POST/GetPostWithComments?postId=${postId}`, {
-            method: "GET",
-        });
+            let postResponse = await fetch(`/POST/GetPostWithComments?postId=${postId}`, {
+                method: "GET",
+            });
 
-        let postHtml = await postResponse.text();
+            let postHtml = await postResponse.text();
         
-        //console.log(postHtml);
-        let postWithCommentsBody = document.getElementById("postWithCommentsBody");
-        postWithCommentsBody.innerHTML = postHtml;
+            //console.log(postHtml);
+            let postWithCommentsBody = document.getElementById("postWithCommentsBody");
+            postWithCommentsBody.innerHTML = postHtml;
 
-        let closePostButton = document.getElementById("close-post-btn");
-        closePostButton.dataset.postId = postId;
+            let closePostButton = document.getElementById("close-post-btn");
+            closePostButton.dataset.postId = postId;
 
-        ////let formData = new FormData();
-        ////formData.append("postId", postId);
-        //let header = document.createElement("div");
-        //header.classList.add("post-with-comments-header");
-        //let 
-
-
-
+            ////let formData = new FormData();
+            ////formData.append("postId", postId);
+            //let header = document.createElement("div");
+            //header.classList.add("post-with-comments-header");
+            //let 
+        }   
     }
 });
 
 // close post with comments 
 document.addEventListener("click", async function (e) {
-    if (e.target.id === "close-post-btn") {
+    let btn = e.target.closest("#close-post-btn");
 
-        let postId = e.target.dataset.postId;
+    if (!btn) return;
 
-        let temp = document.createElement("div");
-        temp.innerHTML = result;
+    document.getElementById("postWithCommentsBody").innerHTML = "";
+    postWithCommentsContainer.classList.remove("show");
+    modal.classList.remove("show");
+});
 
-        let newElement = temp.firstElementChild;
 
-        currentPost.replaceWith(newElement);
+// ADD Comment 
 
+document.getElementById("commentForm")
+.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    let form = this;
+    let formData = new FormData(form);
+
+    let btn = document.getElementById("add-comment-btn");
+    btn.disabled = true;
+
+    let currentPost = postWithCommentsContainer.querySelector("#post");
+    let postId = currentPost.dataset.postId;
+
+    formData.append("postId", postId);
+
+    let response = await fetch("/Post/AddComment", {
+        method: "POST",
+        body: formData
+    });
+
+    if (response.ok) {
+
+        let result = await response.text();
+
+        document.getElementById("comments-container").insertAdjacentHTML("afterbegin", result);
+
+        document.querySelector("[data-valmsg-for='Content']").innerText = "";
+
+        let curHomePost = allPostsDiv.getElementsByClassName(`post-${postId}`)[0];
+
+        let commentsCounterOfPost = curHomePost.querySelector(`#comments-of-${postId}`);
+
+        let currentNumber = parseInt(commentsCounterOfPost.textContent);
+
+        commentsCounterOfPost.textContent = currentNumber + 1;
+
+        let commentsCounterOfPostWithComments = currentPost.querySelector(`#comments-of-${postId}`);
+
+        commentsCounterOfPostWithComments.textContent = currentNumber + 1;
+
+        form.reset();
+    } else {
+        let errorText = await response.text();
+    
+        document.querySelector("[data-valmsg-for='Content']").innerText = "Invalid comment";
+        e.preventDefault();
+    }
+    btn.disabled = false;
+});
+
+
+// disable input comment 
+let commentInput = document.getElementById("comment-input");
+let addCommbtn = document.getElementById("add-comment-btn");
+
+commentInput.addEventListener("input", () => {
+    addCommbtn.disabled = commentInput.value.trim() === "";
+});
+
+
+// Toggle Comment Like
+
+//let likeCommentBtn = document.getElementById("like-commment");
+document.addEventListener("click", async function(e) {
+    if (e.target.id === "like-comment") {
+        //let commentId = parseInt(e.target.dataset.commentId);
+        let commentId = e.target.dataset.commentId;
+        let formData = new FormData();
+        formData.append("commentId", commentId);
+
+        let response = await fetch("/Post/ToggleCommentLike", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            let result = await response.json();
+            let commentLikes = postWithCommentsContainer.querySelector(`#comment-likes-${commentId}`);
+            console.log(commentLikes);
+            let currentNumber = parseInt(commentLikes.textContent);
+            if (result.liked) {
+                e.target.classList.add("color-blue");
+                commentLikes.textContent = currentNumber + 1;
+
+            } else {
+                e.target.classList.remove("color-blue");
+                commentLikes.textContent = currentNumber - 1;
+            }
+        }
 
     }
 });
+
+// SHOW COMMENT OPTIONS
+
+document.addEventListener("click", async function (e) {
+    let commentOptionsBtn = e.target.closest(".comment-menu-btn");
+    if (commentOptionsBtn) {
+
+        let commentMenuContainer = commentOptionsBtn.closest(".comment-menu-container");
+        let menu = commentMenuContainer.querySelector(".comment-menu");
+        let commentId = commentMenuContainer.dataset.commentId;
+
+        if (menu.classList.contains("show")) {
+            menu.classList.remove("show");
+            menu.innerHTML = "";
+            return;
+        }
+        else {
+            let response = await fetch(`/Post/GetPrivileges?commentId=${commentId}`);
+            let data = await response.json();
+
+            menu.innerHTML = "";
+            if (data.isOwner == true) {
+                console.log(data.IsOwner);
+                menu.innerHTML += `<button class="edit-comment" data-comment-id="${commentId}">Edit</button>`;
+                menu.innerHTML += `<button class="delete-comment" data-comment-id="${commentId}">Delete</button>`;
+            }else {
+                console.log(data.IsOwner);
+                menu.innerHTML += `<button class="hide-comment" data-comment-id="${commentId}">Hide</button>`;
+            }
+            menu.classList.add("show");
+        }
+    }
+});
+
+
+// DELETE COMMENT
+
+document.addEventListener("click", async function (e) {
+    
+    let deleteBtn = e.target.closest(".delete-comment");
+    if (deleteBtn) {
+
+        let commentId = deleteBtn.dataset.commentId;
+        let response = await fetch("/Post/DeleteComment", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(commentId)
+        });
+
+        let result = await response.json();
+
+        if (result.success) {
+            let commentElement = deleteBtn.closest(".comment");
+            commentElement.remove();
+
+            let currentPost = postWithCommentsContainer.querySelector("#post");
+            let postId = currentPost.dataset.postId;
+
+            let curHomePost = allPostsDiv.getElementsByClassName(`post-${postId}`)[0];
+
+            let commentsCounterOfPost = curHomePost.querySelector(`#comments-of-${postId}`);
+
+            let currentNumber = parseInt(commentsCounterOfPost.textContent);
+
+            commentsCounterOfPost.textContent = currentNumber - 1;
+
+            let commentsCounterOfPostWithComments = currentPost.querySelector(`#comments-of-${postId}`);
+
+            commentsCounterOfPostWithComments.textContent = currentNumber - 1;
+
+        } else {
+            console.log("Delete failed");
+        }
+    }
+});
+
+
+
+// UPDATE COMMENT
+
+document.addEventListener("click", async function (e) {
+
+    let editBtn = e.target.closest(".edit-comment");
+
+    if (editBtn) {
+
+        let commentId = editBtn.dataset.commentId;
+        let commentElement = editBtn.closest(".comment");
+        let contentEl = commentElement.querySelector("p");
+
+        let oldContent = contentEl.textContent;
+
+        contentEl.innerHTML = `
+            <input type="text" class="edit-input" value="${oldContent}" />
+            <button class="save-edit">Save</button>
+            <button class="cancel-edit">Cancel</button>
+        `;
+    }
+});
+
+// save edit comment
+
+document.addEventListener("click", async function (e) {
+
+    let saveBtn = e.target.closest(".save-edit");
+
+    if (saveBtn) {
+
+        let commentElement = saveBtn.closest(".comment");
+        let input = commentElement.querySelector(".edit-input");
+        let newContent = input.value;
+
+        let commentId = commentElement
+            .querySelector(".comment-menu-container")
+            .dataset.commentId;
+
+        let formData = new FormData();
+        formData.append("commentId", commentId);
+        formData.append("content", newContent);
+
+        let response = await fetch("/Post/UpdateComment", {
+            method: "POST",
+            body: formData
+        });
+
+        let result = await response.json();
+
+        if (result.success) {
+            // رجع النص
+            let contentEl = commentElement.querySelector("p");
+            contentEl.textContent = newContent;
+        } else {
+            console.log("Update failed");
+        }
+    }
+});
+
+// cancel edit comment
+document.addEventListener("click", function (e) {
+
+    let cancelBtn = e.target.closest(".cancel-edit");
+
+    if (cancelBtn) {
+
+        let commentElement = cancelBtn.closest(".comment");
+        let input = commentElement.querySelector(".edit-input");
+
+        let oldContent = input.defaultValue;
+
+        let contentEl = commentElement.querySelector("p");
+        contentEl.textContent = oldContent;
+    }
+});
+
+
+
 
 
 

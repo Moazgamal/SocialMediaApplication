@@ -3,9 +3,14 @@
     ViewData["Title"] = "Home Page";
     Layout = "";
 }
+@* <!-- Bootstrap -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
+
 <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
 <link href="~/css/home.css" rel="stylesheet" />
+
 <body>
 <div id="modal-div">
 </div>
@@ -30,10 +35,19 @@
             
         </div>
 
-        <div class="post-with-comments-footer">
+        @* <div class="post-with-comments-footer">
             <input type="text" id="comment-input" placeholder="Write a comment..." />
             <button id="add-comment-btn">Send</button>
-        </div>
+        </div> *@
+
+        <form id="commentForm" class="post-with-comments-footer">
+            <div class="input-wrapper">
+                <input type="text" name="Content" class="form-control" id="comment-input" maxlength="200" placeholder="Write a comment..." />
+                <span class="text-danger" data-valmsg-for="Content"></span>
+            </div>
+
+            <button type="submit" id="add-comment-btn"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
 
     </div>
     
@@ -171,11 +185,20 @@
          </div>
      </div>
  </div>
-
+    <!-- jQuery -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script> 
+
+    <!-- Validation -->
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script> 
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script> 
-<script src="~/js/site.js"></script>    
+
+
+    <!-- Bootstrap JS -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- Custom JS -->
+    <script src="~/js/site.js"></script>    
  </body>
 
 @* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@

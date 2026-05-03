@@ -19,7 +19,7 @@ namespace SocialMediaApplication.DAL.Models
         public DateTime DateOfCreation { get; set; }  
         public ApplicationUser creatingUser { get; set; }
 
-        public ICollection<UserLikePost> Likes { get; set; }
+        public ICollection<UserLikePost> Likes { get; set; } 
         //public ICollection<ApplicationUser>? Likes { get; set; }
 
         public ICollection<Comment>? Comments { get; set; }

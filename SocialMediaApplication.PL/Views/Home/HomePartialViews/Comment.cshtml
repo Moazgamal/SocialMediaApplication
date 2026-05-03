@@ -4,27 +4,44 @@
 <div class="comment" id="comment-@Model.Id">
 
     <img src="~/files/images/Users/@Model.UserImageName" class="user-image"/>
+    <div class="comment-content">
+
+        <div class="comment-top">
+            <strong>@Model.UserName</strong>
+
+            <div class="comment-menu-container" data-comment-id="@Model.Id">
+                <button class="comment-menu-btn">⋯</button>
+
+                <div class="comment-menu">
+                    @* <button class="edit-comment">Edit</button>
+                    <button class="delete-comment">Delete</button> *@
+                </div>
+            </div>
+        </div>
 
     <div>
-        <strong>@Model.UserName</strong>
-        <p>@Model.Content</p>
 
+
+        <p>@Model.Content</p>
+        <div class="comment-actions">
         <div>
-            <span>@Model.NumberOfLikes</span>
+            <span id="comment-likes-@Model.Id">@Model.NumberOfLikes</span>
 
             @if(Model.IsLikedByCurrentUser)
             {
-                <button class="like-comment color-blue" data-comment-id="@Model.Id">
+                <button id="like-comment" class="like-comment color-blue" data-comment-id="@Model.Id">
                     Like
                 </button>
             }
             else
             {
-                <button class="like-comment" data-comment-id="@Model.Id">
+                <button id="like-comment" class="like-comment" data-comment-id="@Model.Id">
                     Like
                 </button>
             }
         </div>
+        </div>
+    </div>
     </div>
 
 </div>

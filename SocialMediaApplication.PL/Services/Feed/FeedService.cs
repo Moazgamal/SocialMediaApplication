@@ -27,6 +27,7 @@ namespace SocialMediaApplication.PL.Services.Feed
                     
                 ).Include(p => p.creatingUser)
                 .Include(p => p.Likes)
+                .Include(p => p.Comments)
                 .OrderByDescending(p => p.DateOfCreation)
                 .ToListAsync();
             var returnedPosts = query.Select(p => new PostToReturnViewModel
@@ -37,6 +38,7 @@ namespace SocialMediaApplication.PL.Services.Feed
                 creatingUserName = p.creatingUser.UserName,
                 creatingUserImageName = p.creatingUser.profilePictureName,
                 NumberOfLikes = p.Likes.Count(),
+                NumberOfComments = p.Comments is not null ? p.Comments.Count() : 0,
                 IsLikedByCurrentUser = p.Likes.Any(l => l.userId == currentUserId),
             })
                 .ToList();

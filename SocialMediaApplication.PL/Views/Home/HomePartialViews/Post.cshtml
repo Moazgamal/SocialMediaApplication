@@ -1,5 +1,5 @@
 ﻿@model PostToReturnViewModel;
-<div id="post" class="post-@Model.Id">
+<div id="post" class="post-@Model.Id" data-post-id="@Model.Id">
 <div class="post-header">
     <input type="hidden" name="PostId" value="@Model.Id" readonly/>
     <div class="user-name-and-image">
@@ -48,7 +48,7 @@
 
 <div class="Numbers-Container">
     <div><a class="likes" data-post-id="@Model.Id" id="likes-of-@Model.Id" >@Model.NumberOfLikes</a></div>
-    <div><a href="">@Model.NumberOfComments</a></div>
+    <div><a id="comments-of-@Model.Id" href="">@Model.NumberOfComments</a></div>
     <div><a href="">@Model.NumberOfShares</a></div>
 </div>
 
